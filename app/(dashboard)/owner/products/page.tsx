@@ -1,6 +1,7 @@
 import { getProducts } from '@/lib/actions/product';
 import Link from 'next/link';
 import { Package, Plus, MoreVertical } from 'lucide-react';
+import ProductRowActions from './ProductRowActions';
 
 export default async function ProductsPage() {
   const products = await getProducts();
@@ -68,9 +69,7 @@ export default async function ProductsPage() {
                       {product.packSize}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-slate-400 hover:text-slate-700 transition-colors">
-                        <MoreVertical className="w-5 h-5 inline-block" />
-                      </button>
+                      <ProductRowActions productId={product._id.toString()} />
                     </td>
                   </tr>
                 ))

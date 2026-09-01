@@ -1,20 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { createProduct } from '@/lib/actions/product';
+import { createProduct, updateProduct } from '@/lib/actions/product';
 
-export default function ProductForm({ brands }: { brands: any[] }) {
+export default function ProductForm({ brands, initialData }: { brands: any[], initialData?: any }) {
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [brandSelection, setBrandSelection] = useState<string>('');
+  // If editing, the name is already the full name. 
+  // We'll let the user edit it as the full name or we can just populate it.
+  const [name, setName] = useState(initialData?.name || '');
+  const [brandSelection, setBrandSelection] = useState<string>(initialData?.brandId || '');
   const [newBrandName, setNewBrandName] = useState('');
-  const [costPrice, setCostPrice] = useState('');
-  const [sellingPrice, setSellingPrice] = useState('');
-  const [packSize, setPackSize] = useState('1');
+  const [costPrice, setCostPrice] = useState(initialData?.costPrice?.toString() || '');
+  const [sellingPrice, setSellingPrice] = useState(initialData?.sellingPrice?.toString() || '');
+  const [packSize, setPackSize] = useState(initialData?.packSize?.toString() || '1');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,16 +39,27 @@ export default function ProductForm({ brands }: { brands: any[] }) {
         if (found) brandNameStr = found.name;
       }
 
-      const fullName = `${brandNameStr} - ${name}`;
+      // Only combine if we are creating new, or if the name doesn't already contain the brand name
+      // To be safe, let's just use the exact name typed for edits, or recombine if creating.
+      let fullName = name;
+      if (!initialData) {
+        fullName = `${brandNameStr} - ${name}`;
+      }
 
-      await createProduct({
+      const payload = {
         name: fullName,
         brandId: brandSelection === 'new' ? undefined : brandSelection,
         newBrandName: brandSelection === 'new' ? newBrandName : undefined,
         costPrice: Number(costPrice),
         sellingPrice: Number(sellingPrice),
         packSize: Number(packSize),
-      });
+      };
+
+      if (initialData) {
+        await updateProduct(initialData._id, payload);
+      } else {
+        await createProduct(payload);
+      }
 
       router.push('/owner/products');
     } catch (err: any) {
