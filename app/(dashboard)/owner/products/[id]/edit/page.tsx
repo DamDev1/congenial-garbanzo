@@ -2,15 +2,21 @@ import { getBrands, getProduct } from '@/lib/actions/product';
 import ProductForm from '../../new/ProductForm';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const [brands, product] = await Promise.all([
     getBrands(),
-    getProduct(params.id)
+    getProduct(id)
   ]);
 
+  if (!product) {
+    notFound();
+  }
+
   return (
-    <div className="space-y-6 max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center gap-4">
         <Link href="/owner/products" className="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 hover:shadow-sm transition-all">
           <ArrowLeft className="w-5 h-5" />
