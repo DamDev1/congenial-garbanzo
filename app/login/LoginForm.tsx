@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/Input';
 
 export default function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export default function LoginForm() {
 
     const res = await signIn('credentials', {
       redirect: false,
-      email,
+      username,
       password,
     });
 
@@ -43,13 +43,13 @@ export default function LoginForm() {
       
       <div className="space-y-5">
         <Input
-          id="email"
-          type="email"
+          id="username"
+          type="text"
           label="Username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
-          placeholder="sellostore@company.com"
+          placeholder="admin"
         />
 
         <Input

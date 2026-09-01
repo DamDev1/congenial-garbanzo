@@ -38,8 +38,8 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         onClick={onClose}
       />
       
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-slate-100">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col relative z-10 animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between p-6 border-b border-slate-100 flex-shrink-0">
           <h3 className="text-xl font-bold text-slate-800">{title}</h3>
           <button 
             onClick={onClose}
@@ -49,7 +49,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           </button>
         </div>
         
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto">
           {children}
         </div>
       </div>

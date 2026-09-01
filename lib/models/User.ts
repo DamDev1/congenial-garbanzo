@@ -2,10 +2,12 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IUser extends Document {
   name: string;
-  email: string;
-  password?: string; // Optional for users that might authenticate differently in the future
+  username: string;
+  phone: string;
+  password?: string;
   role: 'owner' | 'manager' | 'cashier';
-  branchId?: mongoose.Types.ObjectId; // Nullable for owner
+  branchId?: mongoose.Types.ObjectId;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,8 +15,10 @@ export interface IUser extends Document {
 const UserSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, select: false }, // Don't return password by default
+    username: { type: String, required: true, unique: true },
+    phone: { type: String, required: true },
+    password: { type: String, select: false },
+    isActive: { type: Boolean, default: true },
     role: {
       type: String,
       enum: ['owner', 'manager', 'cashier'],

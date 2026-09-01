@@ -9,20 +9,24 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'text', placeholder: 'jsmith@example.com' },
+        username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, req) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Please enter an email and password');
+        if (!credentials?.username || !credentials?.password) {
+          throw new Error('Please enter a username and password');
         }
 
         await connectToDatabase();
 
-        const user = await User.findOne({ email: credentials.email }).select('+password');
+        const user = await User.findOne({ username: credentials.username }).select('+password');
 
         if (!user || !user.password) {
           throw new Error('No user found');
+        }
+
+        if (!user.isActive) {
+          throw new Error('Account is deactivated. Please contact your manager.');
         }
 
         const passwordMatch = await bcrypt.compare(credentials.password, user.password);
@@ -34,7 +38,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user._id.toString(),
           name: user.name,
-          email: user.email,
+          username: user.username,
           role: user.role,
           branchId: user.branchId ? user.branchId.toString() : undefined,
         };
@@ -46,6 +50,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = user.role;
         token.id = user.id;
+        token.username = user.username;
         token.branchId = user.branchId;
       }
       return token;
@@ -54,6 +59,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.role = token.role;
         session.user.id = token.id;
+        session.user.username = token.username;
         session.user.branchId = token.branchId;
       }
       return session;

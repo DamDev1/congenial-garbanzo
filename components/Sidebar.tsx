@@ -17,7 +17,7 @@ const managerNavItems = [
   { href: '/manager/checkout', label: 'POS Checkout', icon: Store },
   { href: '/manager/inventory', label: 'Inventory', icon: Package },
   { href: '/manager/transfers', label: 'Transfers', icon: ArrowRightLeft },
-  { href: '/manager/customers', label: 'Customers', icon: Users },
+  { href: '/manager/users', label: 'Staff', icon: Users },
 ];
 
 const cashierNavItems = [

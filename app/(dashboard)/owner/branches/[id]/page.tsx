@@ -99,7 +99,7 @@ export default async function BranchDrillDownPage({
           </div>
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Manager</p>
           <h3 className="text-lg font-bold text-slate-900 mt-1">{manager ? manager.name : 'Unassigned'}</h3>
-          {manager && <p className="text-sm text-slate-500 truncate">{manager.email}</p>}
+          {manager && <p className="text-sm text-slate-500 truncate">@{manager.username} &bull; {manager.phone}</p>}
         </div>
       </div>
 

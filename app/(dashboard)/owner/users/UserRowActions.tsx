@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { MoreVertical, Edit2, Trash2, AlertTriangle } from 'lucide-react';
-import { deleteUser } from '@/lib/actions/user';
+import { MoreVertical, Edit2, Power, PowerOff } from 'lucide-react';
+import { toggleUserStatus } from '@/lib/actions/user';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 
@@ -14,19 +14,21 @@ export default function UserRowActions({
   onEdit: (user: any) => void 
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
+  const isActive = user.isActive ?? true;
+
+  const handleToggleStatus = async () => {
+    setIsUpdating(true);
     try {
-      await deleteUser(user._id);
-      setShowDeleteModal(false);
+      await toggleUserStatus(user._id, !isActive);
+      setShowStatusModal(false);
       setIsOpen(false);
-    } catch (error) {
-      alert('Failed to delete user');
+    } catch (error: any) {
+      alert(error.message || 'Failed to update user status');
     } finally {
-      setIsDeleting(false);
+      setIsUpdating(false);
     }
   };
 
@@ -45,7 +47,7 @@ export default function UserRowActions({
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-1 w-36 bg-white rounded-xl shadow-lg border border-slate-100 z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div className="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-100 z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2">
             <button
               onClick={() => {
                 onEdit(user);
@@ -58,48 +60,58 @@ export default function UserRowActions({
             </button>
             <button
               onClick={() => {
-                setShowDeleteModal(true);
+                setShowStatusModal(true);
                 setIsOpen(false);
               }}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                isActive ? 'text-orange-600 hover:bg-orange-50' : 'text-emerald-600 hover:bg-emerald-50'
+              }`}
             >
-              <Trash2 className="w-4 h-4" />
-              Delete
+              {isActive ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
+              {isActive ? 'Deactivate' : 'Activate'}
             </button>
           </div>
         </>
       )}
 
       <Modal 
-        isOpen={showDeleteModal} 
-        onClose={() => !isDeleting && setShowDeleteModal(false)}
-        title="Delete User"
+        isOpen={showStatusModal} 
+        onClose={() => !isUpdating && setShowStatusModal(false)}
+        title={isActive ? 'Deactivate User' : 'Activate User'}
       >
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-2">
-            <AlertTriangle className="w-8 h-8" />
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-2 ${
+            isActive ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'
+          }`}>
+            {isActive ? <PowerOff className="w-8 h-8" /> : <Power className="w-8 h-8" />}
           </div>
           <p className="text-slate-600">
-            Are you sure you want to delete <span className="font-bold text-slate-800">{user.name}</span>? 
-            They will lose all access to the system immediately.
+            {isActive 
+              ? `Are you sure you want to deactivate ${user.name}? They will lose access to log into the system.`
+              : `Are you sure you want to reactivate ${user.name}? They will regain access to the system.`
+            }
           </p>
           
           <div className="flex items-center gap-3 w-full mt-6">
             <Button 
               type="button" 
-              onClick={() => setShowDeleteModal(false)}
-              disabled={isDeleting}
+              onClick={() => setShowStatusModal(false)}
+              disabled={isUpdating}
               className="!bg-white !text-slate-700 border border-slate-200 hover:!bg-slate-50 shadow-sm flex-1"
             >
               Cancel
             </Button>
             <Button 
               type="button" 
-              onClick={handleDelete}
-              isLoading={isDeleting}
-              className="!bg-red-600 hover:!bg-red-700 shadow-[0_8px_16px_-6px_rgba(220,38,38,0.4)] flex-1"
+              onClick={handleToggleStatus}
+              isLoading={isUpdating}
+              className={`flex-1 text-white shadow-lg ${
+                isActive 
+                  ? '!bg-orange-600 hover:!bg-orange-700 shadow-orange-600/40' 
+                  : '!bg-emerald-600 hover:!bg-emerald-700 shadow-emerald-600/40'
+              }`}
             >
-              Delete
+              Confirm
             </Button>
           </div>
         </div>

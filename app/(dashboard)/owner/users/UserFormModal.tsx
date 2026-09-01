@@ -11,14 +11,17 @@ interface UserFormModalProps {
   onClose: () => void;
   branches: any[];
   initialData?: any;
+  fixedRole?: 'manager' | 'cashier';
+  fixedBranchId?: string;
 }
 
-export function UserFormModal({ isOpen, onClose, branches, initialData }: UserFormModalProps) {
+export function UserFormModal({ isOpen, onClose, branches, initialData, fixedRole, fixedBranchId }: UserFormModalProps) {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'manager' | 'cashier'>('cashier');
-  const [branchId, setBranchId] = useState('');
+  const [role, setRole] = useState<'manager' | 'cashier'>(fixedRole || 'cashier');
+  const [branchId, setBranchId] = useState(fixedBranchId || '');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,13 +29,14 @@ export function UserFormModal({ isOpen, onClose, branches, initialData }: UserFo
   useEffect(() => {
     if (isOpen) {
       setName(initialData?.name || '');
-      setEmail(initialData?.email || '');
-      setPassword(''); // Never prefill password
-      setRole(initialData?.role || 'cashier');
-      setBranchId(initialData?.branchId?._id || initialData?.branchId || '');
+      setUsername(initialData?.username || '');
+      setPhone(initialData?.phone || '');
+      setPassword(''); // Password is only set on creation
+      setRole(fixedRole || initialData?.role || 'cashier');
+      setBranchId(fixedBranchId || initialData?.branchId?._id || initialData?.branchId || '');
       setError('');
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, fixedRole, fixedBranchId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,18 +46,23 @@ export function UserFormModal({ isOpen, onClose, branches, initialData }: UserFo
     try {
       if (!branchId) throw new Error('Please assign a branch');
 
-      const payload = {
+      const payload: any = {
         name,
-        email,
-        password: password || undefined,
+        username,
+        phone,
         role,
         branchId,
       };
 
+      if (!initialData) {
+        if (!password) throw new Error('A permanent password is required when creating a user');
+        payload.password = password;
+      }
+
       if (initialData) {
         await updateUser(initialData._id, payload);
       } else {
-        await createUser(payload);
+        await createUser(payload as any);
       }
 
       onClose();
@@ -86,27 +95,40 @@ export function UserFormModal({ isOpen, onClose, branches, initialData }: UserFo
           placeholder="e.g. John Doe"
         />
 
-        <Input
-          id="email"
-          type="email"
-          label="Email Address / Username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="john@deluv.com"
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            id="username"
+            type="text"
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            placeholder="johndoe"
+          />
+          <Input
+            id="phone"
+            type="tel"
+            label="Phone Number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+            placeholder="08012345678"
+          />
+        </div>
 
-        <Input
-          id="password"
-          type="password"
-          label={initialData ? 'New Password (leave blank to keep current)' : 'Password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required={!initialData}
-          placeholder="••••••••"
-        />
+        {!initialData && (
+          <Input
+            id="password"
+            type="password"
+            label="Permanent Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="••••••••"
+          />
+        )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-[13px] font-bold text-slate-900 block" htmlFor="role">
               Role
@@ -116,10 +138,11 @@ export function UserFormModal({ isOpen, onClose, branches, initialData }: UserFo
               value={role}
               onChange={(e) => setRole(e.target.value as 'manager' | 'cashier')}
               required
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-colors text-slate-800"
+              disabled={!!fixedRole}
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-colors text-slate-800 disabled:bg-slate-50 disabled:text-slate-500"
             >
               <option value="cashier">Cashier</option>
-              <option value="manager">Manager</option>
+              {(!fixedRole || fixedRole === 'manager') && <option value="manager">Manager</option>}
             </select>
           </div>
 
@@ -132,7 +155,8 @@ export function UserFormModal({ isOpen, onClose, branches, initialData }: UserFo
               value={branchId}
               onChange={(e) => setBranchId(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-colors text-slate-800"
+              disabled={!!fixedBranchId}
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-colors text-slate-800 disabled:bg-slate-50 disabled:text-slate-500"
             >
               <option value="" disabled>Select Branch</option>
               {branches.map(b => (
@@ -142,7 +166,7 @@ export function UserFormModal({ isOpen, onClose, branches, initialData }: UserFo
           </div>
         </div>
         
-        {role === 'manager' && (
+        {role === 'manager' && !fixedRole && (
           <p className="text-xs text-orange-600 bg-orange-50 p-2 rounded-lg border border-orange-100">
             Note: Assigning a new Manager will automatically unassign any existing Manager for this branch.
           </p>
