@@ -5,6 +5,7 @@ import { MoreVertical, Edit2, Power, PowerOff } from 'lucide-react';
 import { toggleUserStatus } from '@/lib/actions/user';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
+import { Dropdown } from '@/components/ui/Dropdown';
 
 export default function UserRowActions({ 
   user, 
@@ -13,7 +14,6 @@ export default function UserRowActions({
   user: any, 
   onEdit: (user: any) => void 
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -24,7 +24,6 @@ export default function UserRowActions({
     try {
       await toggleUserStatus(user._id, !isActive);
       setShowStatusModal(false);
-      setIsOpen(false);
     } catch (error: any) {
       alert(error.message || 'Failed to update user status');
     } finally {
@@ -34,24 +33,19 @@ export default function UserRowActions({
 
   return (
     <div className="relative">
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="text-slate-400 hover:text-slate-700 transition-colors p-2 rounded-full hover:bg-slate-100"
+      <Dropdown
+        trigger={
+          <button className="text-slate-400 hover:text-slate-700 transition-colors p-2 rounded-full hover:bg-slate-100">
+            <MoreVertical className="w-5 h-5" />
+          </button>
+        }
       >
-        <MoreVertical className="w-5 h-5" />
-      </button>
-
-      {isOpen && (
-        <>
-          <div 
-            className="fixed inset-0 z-10" 
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-100 z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2">
+        {(close) => (
+          <>
             <button
               onClick={() => {
                 onEdit(user);
-                setIsOpen(false);
+                close();
               }}
               className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
             >
@@ -61,7 +55,7 @@ export default function UserRowActions({
             <button
               onClick={() => {
                 setShowStatusModal(true);
-                setIsOpen(false);
+                close();
               }}
               className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
                 isActive ? 'text-orange-600 hover:bg-orange-50' : 'text-emerald-600 hover:bg-emerald-50'
@@ -70,9 +64,9 @@ export default function UserRowActions({
               {isActive ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
               {isActive ? 'Deactivate' : 'Activate'}
             </button>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </Dropdown>
 
       <Modal 
         isOpen={showStatusModal} 
