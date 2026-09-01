@@ -1,0 +1,70 @@
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { getCashierStats } from '@/lib/actions/cashier';
+import { Wallet, ShoppingBag, Package } from 'lucide-react';
+
+export default async function CashierDashboardPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== 'cashier') {
+    redirect('/login');
+  }
+
+  const stats = await getCashierStats(session.user.id);
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            Welcome back, {session.user.name}
+          </h1>
+          <p className="text-slate-500 font-medium mt-1">Here is your summary for today.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-blue-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
+            <Wallet className="w-6 h-6" />
+          </div>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Today's Revenue</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.totalRevenue.toLocaleString()}</h3>
+        </div>
+
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-emerald-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
+            <ShoppingBag className="w-6 h-6" />
+          </div>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Today's Sales</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">{stats.salesCount}</h3>
+        </div>
+
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-purple-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
+            <Package className="w-6 h-6" />
+          </div>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Items Sold Today</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">{stats.totalItemsSold}</h3>
+        </div>
+      </div>
+      
+      <div className="mt-8 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h3 className="text-xl font-bold text-slate-800">Ready to serve customers?</h3>
+          <p className="text-slate-600 mt-1">Jump right into the POS system to start processing new sales for your branch.</p>
+        </div>
+        <a 
+          href="/cashier/pos" 
+          className="px-6 py-3 bg-[#3B41E3] hover:bg-[#2A2FC3] text-white rounded-xl font-semibold shadow-lg shadow-blue-500/30 transition-all text-center whitespace-nowrap"
+        >
+          Open POS Terminal
+        </a>
+      </div>
+    </div>
+  );
+}

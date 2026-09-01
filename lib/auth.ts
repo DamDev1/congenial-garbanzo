@@ -16,10 +16,12 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.username || !credentials?.password) {
           throw new Error('Please enter a username and password');
         }
-
         await connectToDatabase();
 
-        const user = await User.findOne({ username: credentials.username }).select('+password');
+        const searchUsername = credentials.username.trim().toLowerCase();
+        const user = await User.findOne({ 
+          username: { $regex: new RegExp(`^${searchUsername}$`, 'i') } 
+        }).select('+password');
 
         if (!user || !user.password) {
           throw new Error('No user found');

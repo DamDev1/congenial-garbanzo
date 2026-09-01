@@ -21,7 +21,9 @@ const managerNavItems = [
 ];
 
 const cashierNavItems = [
-  { href: '/cashier', label: 'POS Checkout', icon: Store },
+  { href: '/cashier', label: 'Dashboard', icon: Home },
+  { href: '/cashier/pos', label: 'POS Checkout', icon: Store },
+  { href: '/cashier/sales', label: 'Sales History', icon: Package },
 ];
 
 export function Sidebar({ userRole }: { userRole: string }) {
