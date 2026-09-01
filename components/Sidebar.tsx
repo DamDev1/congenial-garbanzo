@@ -38,7 +38,7 @@ export function Sidebar({ userRole }: { userRole: string }) {
       
       <div className="h-24 flex items-center px-8 relative z-10">
         <h1 className="text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400 drop-shadow-sm">
-          De-Luv
+          De-Luv Limited
         </h1>
       </div>
       
@@ -49,7 +49,10 @@ export function Sidebar({ userRole }: { userRole: string }) {
         <ul className="space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+             const isDashboardRoot = item.href === '/owner' || item.href === '/manager' || item.href === '/cashier';
+            const isActive = isDashboardRoot 
+              ? pathname === item.href
+              : (pathname === item.href || pathname.startsWith(`${item.href}/`));
             
             return (
               <li key={item.href}>

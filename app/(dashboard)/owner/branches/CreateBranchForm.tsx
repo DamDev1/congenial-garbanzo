@@ -2,10 +2,14 @@
 
 import { useRef, useState } from 'react';
 import { createBranch } from '@/lib/actions/branch';
-import { Store, MapPin, Plus } from 'lucide-react';
+import { Store, Plus } from 'lucide-react';
+import { Modal } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 export function CreateBranchForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -18,6 +22,7 @@ export function CreateBranchForm() {
       const formData = new FormData(e.currentTarget);
       await createBranch(formData);
       formRef.current?.reset();
+      setIsOpen(false);
     } catch (err: any) {
       setError(err.message || 'Failed to create branch');
     } finally {
@@ -26,57 +31,65 @@ export function CreateBranchForm() {
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
-      <h3 className="text-lg font-medium text-slate-800 flex items-center gap-2">
-        <Store className="w-5 h-5 text-blue-500" />
-        Add New Branch
-      </h3>
-      
-      {error && (
-        <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
-          {error}
-        </div>
-      )}
+    <>
+      <button 
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-2 bg-[#3B41E3] hover:bg-[#2A2FC3] text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-[0_4px_12px_-4px_rgba(59,65,227,0.5)]"
+      >
+        <Plus className="w-5 h-5" />
+        <span>Add Branch</span>
+      </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="name" className="text-sm font-medium text-slate-700">Branch Name</label>
-          <input
-            id="name"
-            name="name"
-            required
-            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-            placeholder="e.g. Downtown Store"
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="location" className="text-sm font-medium text-slate-700">Location/Address</label>
-          <input
-            id="location"
-            name="location"
-            required
-            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-            placeholder="e.g. 123 Main St, NY"
-          />
-        </div>
-      </div>
-
-      <div className="pt-2 flex justify-end">
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex items-center gap-2 py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-sm shadow-blue-500/30 disabled:opacity-70 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <>
-              <Plus className="w-4 h-4" />
-              Add Branch
-            </>
+      <Modal 
+        isOpen={isOpen} 
+        onClose={() => !loading && setIsOpen(false)} 
+        title="Add New Branch"
+      >
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+          {error && (
+            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
+              {error}
+            </div>
           )}
-        </button>
-      </div>
-    </form>
+
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
+              <Store className="w-8 h-8" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <Input
+              id="name"
+              name="name"
+              label="Branch Name"
+              required
+              placeholder="e.g. Downtown Store"
+            />
+            <Input
+              id="location"
+              name="location"
+              label="Location/Address"
+              required
+              placeholder="e.g. 123 Main St, NY"
+            />
+          </div>
+
+          <div className="pt-4 border-t border-slate-100 flex justify-end gap-3 mt-6">
+            <Button 
+              type="button" 
+              onClick={() => setIsOpen(false)} 
+              disabled={loading}
+              className="!w-auto !bg-white !text-slate-700 border border-slate-200 hover:!bg-slate-50 shadow-sm"
+            >
+              Cancel
+            </Button>
+            <Button type="submit" isLoading={loading} className="!w-auto px-8">
+              Create Branch
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

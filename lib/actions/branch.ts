@@ -32,3 +32,15 @@ export async function getBranches() {
   const branches = await Branch.find({}).sort({ createdAt: -1 });
   return JSON.parse(JSON.stringify(branches));
 }
+
+export async function toggleBranchStatus(id: string, isActive: boolean) {
+  const session = await getServerSession(authOptions);
+
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  await connectToDatabase();
+  await Branch.findByIdAndUpdate(id, { isActive });
+  revalidatePath('/owner/branches');
+}
