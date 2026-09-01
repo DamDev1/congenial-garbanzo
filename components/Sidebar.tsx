@@ -32,14 +32,13 @@ export function Sidebar({ userRole }: { userRole: string }) {
   if (userRole === 'manager') navItems = managerNavItems;
 
   return (
-    <aside className="w-[280px] glass-dark text-slate-100 hidden md:flex flex-col m-4 rounded-3xl shadow-2xl relative overflow-hidden">
-      {/* Decorative gradient orb */}
+    <aside className="w-[280px] bg-slate-950 text-slate-100 hidden md:flex flex-col m-4 rounded-3xl shadow-2xl relative overflow-hidden">
       <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
       
       <div className="h-24 flex items-center px-8 relative z-10">
         <h1 className="text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400 drop-shadow-sm">
-          De-Luv POS
+          De-Luv
         </h1>
       </div>
       

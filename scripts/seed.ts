@@ -9,7 +9,6 @@ async function seed() {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    // Create an owner if one doesn't exist
     const ownerEmail = 'owner@deluv.com';
     const existingOwner = await User.findOne({ email: ownerEmail });
 
