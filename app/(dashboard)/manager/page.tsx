@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { Store, Users, ArrowRightLeft, TrendingUp } from 'lucide-react';
+import { Store, Users, ArrowRightLeft, TrendingUp, Banknote, Receipt } from 'lucide-react';
 import User from '@/lib/models/User';
 import Branch from '@/lib/models/Branch';
 import Inventory from '@/lib/models/Inventory';
@@ -37,16 +37,20 @@ export default async function ManagerDashboardPage() {
   const lowStockCount = inventoryItems.filter(item => (item as any).quantity < 10).length;
 
   // 2. Get pending transfers for this branch
-  const pendingTransfers = await Transfer.countDocuments({
-    $or: [{ sourceBranchId: branchId }, { destinationBranchId: branchId }],
-    status: 'pending'
-  });
+  // const pendingTransfers = await Transfer.countDocuments({
+  //   $or: [{ sourceBranchId: branchId }, { destinationBranchId: branchId }],
+  //   status: 'pending'
+  // });
 
   // 3. Get total staff in this branch
   const staffCount = await User.countDocuments({
     branchId: branchId,
     role: { $ne: 'owner' }
   });
+
+  // 4. Get today's sales stats
+  const { getManagerStats } = await import('@/lib/actions/manager');
+  const salesStats = await getManagerStats(branchId.toString());
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -61,6 +65,20 @@ export default async function ManagerDashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="w-12 h-12 shrink-0 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+              <Banknote className="w-6 h-6" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Today's Revenue</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.totalRevenue.toLocaleString()}</h3>
+            </div>
+          </div>
+          <p className="text-sm font-medium text-slate-500 relative z-10 truncate">{salesStats.salesCount} sales completed today</p>
+        </div>
+
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="w-12 h-12 shrink-0 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
@@ -74,8 +92,8 @@ export default async function ManagerDashboardPage() {
           <p className="text-sm font-medium text-slate-500 relative z-10 truncate">{totalProducts} unique products ({lowStockCount} low stock)</p>
         </div>
 
-        {/* Pending Transfers Card */}
-        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+        {/* Pending Transfers Card (Temporarily commented out) */}
+        {/* <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="w-12 h-12 shrink-0 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center">
@@ -87,7 +105,7 @@ export default async function ManagerDashboardPage() {
             </div>
           </div>
           <p className="text-sm font-medium text-slate-500 relative z-10 truncate">Awaiting action</p>
-        </div>
+        </div> */}
 
         {/* Staff Card */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
@@ -125,7 +143,7 @@ export default async function ManagerDashboardPage() {
       {/* Quick Actions */}
       <div className="mt-12">
         <h2 className="text-xl font-bold text-slate-800 mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a href="/manager/inventory" className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-6 rounded-3xl shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col items-start gap-4 group">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
               <TrendingUp className="w-6 h-6" />
@@ -133,6 +151,16 @@ export default async function ManagerDashboardPage() {
             <div>
               <h3 className="text-lg font-bold">Manage Inventory</h3>
               <p className="text-emerald-100 text-sm mt-1">Check stock levels and add products.</p>
+            </div>
+          </a>
+
+          <a href="/manager/sales" className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-6 rounded-3xl shadow-lg shadow-blue-500/20 hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col items-start gap-4 group">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Receipt className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold">Branch Sales</h3>
+              <p className="text-blue-100 text-sm mt-1">View the sales history for your branch.</p>
             </div>
           </a>
 

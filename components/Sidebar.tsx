@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, Store, Package, ArrowRightLeft, LogOut, UserSquare } from 'lucide-react';
+import { Home, Users, Store, Package, ArrowRightLeft, LogOut, UserSquare, Receipt } from 'lucide-react';
 
 const ownerNavItems = [
   { href: '/owner', label: 'Dashboard', icon: Home },
@@ -10,13 +10,14 @@ const ownerNavItems = [
   { href: '/owner/users', label: 'Users', icon: Users },
   { href: '/owner/products', label: 'Products', icon: Package },
   { href: '/owner/customers', label: 'Customers', icon: UserSquare },
-  { href: '/owner/transfers', label: 'Transfers', icon: ArrowRightLeft },
+  // { href: '/owner/transfers', label: 'Transfers', icon: ArrowRightLeft },
 ];
 
 const managerNavItems = [
   { href: '/manager', label: 'Dashboard', icon: Home },
   { href: '/manager/inventory', label: 'Inventory', icon: Package },
-  { href: '/manager/transfers', label: 'Transfers', icon: ArrowRightLeft },
+  { href: '/manager/sales', label: 'Sales History', icon: Receipt },
+  // { href: '/manager/transfers', label: 'Transfers', icon: ArrowRightLeft },
   { href: '/manager/users', label: 'Staff', icon: Users },
   { href: '/manager/customers', label: 'Customers', icon: UserSquare },
 ];

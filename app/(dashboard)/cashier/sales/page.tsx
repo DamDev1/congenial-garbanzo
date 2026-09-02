@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { getCashierSales } from '@/lib/actions/cashier';
-import SalesClient from './SalesClient';
+import SalesClient from '@/components/sales/SalesClient';
 import User from '@/lib/models/User';
 import connectDB from '@/lib/db/mongoose';
 

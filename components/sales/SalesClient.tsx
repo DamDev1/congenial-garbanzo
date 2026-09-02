@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Receipt, Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ReceiptModal } from '../checkout/ReceiptModal';
+import { ReceiptModal } from '@/app/(dashboard)/cashier/checkout/ReceiptModal';
 
 export default function SalesClient({ initialSales, initialFilter }: { initialSales: any[], initialFilter: string }) {
   const router = useRouter();
@@ -13,7 +13,9 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
 
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
-    router.push(`/cashier/sales?filter=${newFilter}`);
+    // Determine the base path based on current URL to preserve the role (cashier vs manager)
+    const basePath = window.location.pathname.split('?')[0];
+    router.push(`${basePath}?filter=${newFilter}`);
   };
 
   const filters = [
@@ -47,6 +49,7 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date & Time</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Cashier</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Items</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Customer</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Payment</th>
@@ -57,7 +60,7 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
             <tbody className="divide-y divide-slate-100">
               {initialSales.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3">
                         <Receipt className="w-8 h-8 text-slate-400" />
@@ -77,6 +80,13 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
                       <div className="text-sm text-slate-500">
                         {new Date(sale.createdAt).toLocaleTimeString()}
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {sale.cashierId?.name ? (
+                        <div className="font-medium text-slate-700">{sale.cashierId.name}</div>
+                      ) : (
+                        <span className="text-slate-400 italic">Self</span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-medium text-slate-700">
