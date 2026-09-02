@@ -28,10 +28,8 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
   const [isProcessing, setIsProcessing] = useState(false);
   const [completedTransaction, setCompletedTransaction] = useState<any>(null);
   
-  // Credit checkout state
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
 
-  // Group inventory by brand for easier browsing
   const inventoryByBrand = useMemo(() => {
     const filtered = inventory.filter(item => 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
