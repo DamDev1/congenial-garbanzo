@@ -1,12 +1,13 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { getOwnerDashboardStats } from '@/lib/actions/dashboard';
+import { getOwnerDashboardStats, getRecentTransactions } from '@/lib/actions/dashboard';
 import { Store, Users, Package, TrendingUp, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function OwnerDashboardPage() {
   const session = await getServerSession(authOptions);
   const stats = await getOwnerDashboardStats();
+  const recentTransactions = await getRecentTransactions();
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -85,17 +86,34 @@ export default async function OwnerDashboardPage() {
         <div className="lg:col-span-4 glass rounded-3xl p-8 flex flex-col">
            <div className="flex items-center justify-between mb-6">
              <h3 className="text-xl font-bold text-slate-800">Recent Activity</h3>
-             <button className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">View All</button>
+             <Link href="/owner/sales" className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
            </div>
-           <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
-             <div className="text-center">
-               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-3">
-                 <Store className="w-8 h-8 text-slate-300" />
+           {recentTransactions.length === 0 ? (
+             <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+               <div className="text-center">
+                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-3">
+                   <Store className="w-8 h-8 text-slate-300" />
+                 </div>
+                 <p className="text-slate-500 font-medium">No recent sales to display</p>
+                 <p className="text-sm text-slate-400 mt-1">Sales will appear here once branches start operating.</p>
                </div>
-               <p className="text-slate-500 font-medium">No recent activity to display</p>
-               <p className="text-sm text-slate-400 mt-1">Activities will appear here once branches start operating.</p>
              </div>
-           </div>
+           ) : (
+             <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+               {recentTransactions.slice(0, 3).map((tx: any) => (
+                 <div key={tx._id} className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                   <div>
+                     <div className="font-semibold text-slate-800">₦{tx.totalAmount.toLocaleString()}</div>
+                     <div className="text-sm text-slate-500">{tx.branchId?.name || 'Unknown Branch'} • {tx.cashierId?.name || 'Unknown Cashier'}</div>
+                   </div>
+                   <div className="text-right">
+                     <div className="text-xs font-bold text-slate-400 uppercase">{tx.paymentMethod}</div>
+                     <div className="text-xs text-slate-400">{new Date(tx.createdAt).toLocaleTimeString()}</div>
+                   </div>
+                 </div>
+               ))}
+             </div>
+           )}
         </div>
 
         <div className="lg:col-span-3 glass rounded-3xl p-8">

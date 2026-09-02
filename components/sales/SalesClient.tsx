@@ -49,6 +49,7 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date & Time</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Branch</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Cashier</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Items</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Customer</th>
@@ -60,7 +61,7 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
             <tbody className="divide-y divide-slate-100">
               {initialSales.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3">
                         <Receipt className="w-8 h-8 text-slate-400" />
@@ -81,6 +82,11 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
                         {new Date(sale.createdAt).toLocaleTimeString()}
                       </div>
                     </td>
+                    {initialSales.some(s => s.branchId?.name) && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="font-medium text-slate-700">{sale.branchId?.name || '—'}</div>
+                      </td>
+                    )}
                     <td className="px-6 py-4 whitespace-nowrap">
                       {sale.cashierId?.name ? (
                         <div className="font-medium text-slate-700">{sale.cashierId.name}</div>
@@ -122,7 +128,7 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
                       <Button 
                         type="button"
                         onClick={() => setSelectedTransaction(sale)}
-                        className="!bg-white !text-blue-600 border border-blue-200 hover:!bg-blue-50 shadow-sm"
+                        className="!bg-white !text-blue-600 border border-blue-200 hover:!bg-blue-50 shadow-sm whitespace-nowrap"
                       >
                         <Receipt className="w-4 h-4 mr-2" />
                         View Receipt

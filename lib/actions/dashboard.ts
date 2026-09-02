@@ -101,3 +101,65 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     inventory
   }));
 }
+
+export async function getRecentTransactions(limit: number = 5) {
+  const session = await getServerSession(authOptions);
+
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  await connectToDatabase();
+
+  const transactions = await Transaction.find({ status: 'completed' })
+    .populate('branchId', 'name')
+    .populate('cashierId', 'name')
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean();
+
+  return JSON.parse(JSON.stringify(transactions));
+}
+
+export async function getOwnerSales(filter: 'today' | 'week' | 'month' | 'all' = 'today') {
+  const session = await getServerSession(authOptions);
+
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  await connectToDatabase();
+  
+  let dateQuery = {};
+  const now = new Date();
+  
+  if (filter === 'today') {
+    const start = new Date(now.setHours(0, 0, 0, 0));
+    dateQuery = { $gte: start };
+  } else if (filter === 'week') {
+    const start = new Date(now.setDate(now.getDate() - now.getDay()));
+    start.setHours(0, 0, 0, 0);
+    dateQuery = { $gte: start };
+  } else if (filter === 'month') {
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    dateQuery = { $gte: start };
+  }
+
+  const query: any = { status: 'completed' };
+  if (filter !== 'all') {
+    query.createdAt = dateQuery;
+  }
+
+  const sales = await Transaction.find(query)
+    .populate('branchId', 'name')
+    .populate('cashierId', 'name')
+    .populate('customerId', 'name phone debtBalance')
+    .populate({
+      path: 'items.productId',
+      select: 'name image',
+    })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return JSON.parse(JSON.stringify(sales));
+}

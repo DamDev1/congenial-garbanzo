@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "POS & Inventory System",
-  description: "Soft drinks point of sale and inventory management system",
+  title: "De-Luv Inventory System",
+  description: "Soft drinks inventory management system",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

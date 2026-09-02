@@ -9,6 +9,7 @@ const ownerNavItems = [
   { href: '/owner/branches', label: 'Branches', icon: Store },
   { href: '/owner/users', label: 'Users', icon: Users },
   { href: '/owner/products', label: 'Products', icon: Package },
+  { href: '/owner/sales', label: 'Sales History', icon: Receipt },
   { href: '/owner/customers', label: 'Customers', icon: UserSquare },
   // { href: '/owner/transfers', label: 'Transfers', icon: ArrowRightLeft },
 ];
