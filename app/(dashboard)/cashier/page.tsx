@@ -56,13 +56,13 @@ export default async function CashierDashboardPage() {
       <div className="mt-8 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
           <h3 className="text-xl font-bold text-slate-800">Ready to serve customers?</h3>
-          <p className="text-slate-600 mt-1">Jump right into the POS system to start processing new sales for your branch.</p>
+          <p className="text-slate-600 mt-1">Jump right into the checkout to start processing new sales for your branch.</p>
         </div>
         <a
           href="/cashier/checkout"
           className="px-6 py-3 bg-[#3B41E3] hover:bg-[#2A2FC3] text-white rounded-xl font-semibold shadow-lg shadow-blue-500/30 transition-all text-center whitespace-nowrap"
         >
-          Open POS Terminal
+          Open Checkout
         </a>
       </div>
     </div>

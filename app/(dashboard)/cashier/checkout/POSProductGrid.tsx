@@ -3,15 +3,18 @@ import { Search, ShoppingCart } from 'lucide-react';
 interface POSProductGridProps {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  selectedBrand: string;
+  setSelectedBrand: (b: string) => void;
+  uniqueBrands: unknown[];
   inventoryByBrand: Record<string, any[]>;
   addToCart: (item: any) => void;
 }
 
-export function POSProductGrid({ searchQuery, setSearchQuery, inventoryByBrand, addToCart }: POSProductGridProps) {
+export function POSProductGrid({ searchQuery, setSearchQuery, selectedBrand, setSelectedBrand, uniqueBrands, inventoryByBrand, addToCart }: POSProductGridProps) {
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-50/50 rounded-3xl border border-slate-200 overflow-hidden shadow-inner">
-      <div className="p-4 md:p-6 bg-white border-b border-slate-200 shadow-sm z-10 flex-shrink-0">
-        <div className="relative">
+      <div className="p-4 md:p-6 bg-white border-b border-slate-200 shadow-sm z-10 flex-shrink-0 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input 
             type="text"
@@ -21,6 +24,16 @@ export function POSProductGrid({ searchQuery, setSearchQuery, inventoryByBrand, 
             className="w-full pl-12 pr-4 py-3 bg-slate-100/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800 placeholder:text-slate-400 font-medium"
           />
         </div>
+        <select
+          value={selectedBrand}
+          onChange={(e) => setSelectedBrand(e.target.value)}
+          className="w-full sm:w-auto appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-3 px-4 pr-10 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+        >
+          <option value="All">All Brands</option>
+          {uniqueBrands.map((brand: any) => (
+            <option key={brand} value={brand}>{brand}</option>
+          ))}
+        </select>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6">

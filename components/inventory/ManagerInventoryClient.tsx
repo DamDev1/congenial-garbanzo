@@ -15,10 +15,14 @@ export default function ManagerInventoryClient({ initialInventory, brands, curre
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredInventory = initialInventory.filter((item: any) =>
-    item.productId.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (item.productId.brandId?.name && item.productId.brandId.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const [selectedBrand, setSelectedBrand] = useState('All');
+
+  const filteredInventory = initialInventory.filter((item: any) => {
+    const matchesSearch = item.productId.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (item.productId.brandId?.name && item.productId.brandId.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesBrand = selectedBrand === 'All' || item.productId.brandId?.name === selectedBrand;
+    return matchesSearch && matchesBrand;
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -39,8 +43,8 @@ export default function ManagerInventoryClient({ initialInventory, brands, curre
       </div>
 
       <div className="glass rounded-3xl overflow-hidden shadow-sm border border-slate-100/50 flex flex-col">
-        <div className="p-4 md:p-6 bg-white border-b border-slate-100 flex items-center justify-between">
-          <div className="relative w-full max-w-md">
+        <div className="p-4 md:p-6 bg-white border-b border-slate-100 flex flex-col sm:flex-row items-center gap-4 justify-between">
+          <div className="relative w-full sm:max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
@@ -50,6 +54,16 @@ export default function ManagerInventoryClient({ initialInventory, brands, curre
               className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium"
             />
           </div>
+          <select
+            value={selectedBrand}
+            onChange={(e) => setSelectedBrand(e.target.value)}
+            className="w-full sm:w-auto appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-2.5 px-4 pr-10 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
+          >
+            <option value="All">All Brands</option>
+            {brands.map((b: any) => (
+              <option key={b._id} value={b.name}>{b.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="overflow-x-auto">

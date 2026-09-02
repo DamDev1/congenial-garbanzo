@@ -24,17 +24,25 @@ export interface CartItem {
 
 export default function POSClient({ inventory, customers, branchId, cashierId }: POSClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('All');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [completedTransaction, setCompletedTransaction] = useState<any>(null);
   
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
 
+  const uniqueBrands = useMemo(() => {
+    const brands = new Set(inventory.map(item => item.brandName));
+    return Array.from(brands).sort();
+  }, [inventory]);
+
   const inventoryByBrand = useMemo(() => {
-    const filtered = inventory.filter(item => 
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.brandName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filtered = inventory.filter(item => {
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            item.brandName.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesBrand = selectedBrand === 'All' || item.brandName === selectedBrand;
+      return matchesSearch && matchesBrand;
+    });
     
     const grouped = filtered.reduce((acc: any, item: any) => {
       if (!acc[item.brandName]) acc[item.brandName] = [];
@@ -43,7 +51,7 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
     }, {});
     
     return grouped;
-  }, [inventory, searchQuery]);
+  }, [inventory, searchQuery, selectedBrand]);
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -122,6 +130,9 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
       <POSProductGrid 
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        selectedBrand={selectedBrand}
+        setSelectedBrand={setSelectedBrand}
+        uniqueBrands={uniqueBrands}
         inventoryByBrand={inventoryByBrand}
         addToCart={addToCart}
       />
