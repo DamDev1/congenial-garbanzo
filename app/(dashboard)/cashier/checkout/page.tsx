@@ -12,8 +12,7 @@ export default async function POSPage() {
   if (!session || (session.user.role !== 'cashier' && session.user.role !== 'manager')) {
     redirect('/login');
   }
-
-  // We need to know which branch the cashier/manager is assigned to
+  
   await connectDB();
   const user = await User.findById(session.user.id).lean();
   

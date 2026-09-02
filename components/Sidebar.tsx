@@ -15,7 +15,6 @@ const ownerNavItems = [
 
 const managerNavItems = [
   { href: '/manager', label: 'Dashboard', icon: Home },
-  { href: '/manager/checkout', label: 'POS Checkout', icon: Store },
   { href: '/manager/inventory', label: 'Inventory', icon: Package },
   { href: '/manager/transfers', label: 'Transfers', icon: ArrowRightLeft },
   { href: '/manager/users', label: 'Staff', icon: Users },
@@ -24,7 +23,7 @@ const managerNavItems = [
 
 const cashierNavItems = [
   { href: '/cashier', label: 'Dashboard', icon: Home },
-  { href: '/cashier/pos', label: 'POS Checkout', icon: Store },
+  { href: '/cashier/pos', label: 'Checkout', icon: Store },
   { href: '/cashier/sales', label: 'Sales History', icon: Package },
 ];
 

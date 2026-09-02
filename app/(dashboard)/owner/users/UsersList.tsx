@@ -41,7 +41,7 @@ export default function UsersList({
           className="flex items-center gap-2 bg-[#3B41E3] hover:bg-[#2A2FC3] text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-[0_4px_12px_-4px_rgba(59,65,227,0.5)]"
         >
           <Plus className="w-5 h-5" />
-          <span>Add User</span>
+          <span>Add Staff</span>
         </button>
       </div>
 

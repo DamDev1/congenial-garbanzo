@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Receipt, Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ReceiptModal } from '../pos/ReceiptModal';
+import { ReceiptModal } from '../checkout/ReceiptModal';
 
 export default function SalesClient({ initialSales, initialFilter }: { initialSales: any[], initialFilter: string }) {
   const router = useRouter();

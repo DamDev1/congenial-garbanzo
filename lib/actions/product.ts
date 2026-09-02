@@ -33,6 +33,8 @@ export async function createProduct(data: {
   costPrice: number;
   sellingPrice: number;
   packSize: number;
+  initialStock?: number;
+  branchId?: string;
 }) {
   await connectToDatabase();
 
@@ -60,15 +62,24 @@ export async function createProduct(data: {
 
   const branches = await Branch.find({});
   if (branches.length > 0) {
-    const inventoryDocs = branches.map(branch => ({
-      branchId: branch._id,
-      productId: newProduct._id,
-      quantity: 0,
-    }));
+    const inventoryDocs = branches.map(branch => {
+      // If a branchId is specified, apply the initialStock ONLY to that branch
+      let quantity = 0;
+      if (data.branchId && data.initialStock && branch._id.toString() === data.branchId) {
+        quantity = data.initialStock;
+      }
+
+      return {
+        branchId: branch._id,
+        productId: newProduct._id,
+        quantity: quantity,
+      };
+    });
     await Inventory.insertMany(inventoryDocs);
   }
 
   revalidatePath('/owner/products');
+  revalidatePath('/manager/inventory');
   return JSON.parse(JSON.stringify(newProduct));
 }
 

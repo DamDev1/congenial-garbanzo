@@ -10,8 +10,8 @@ export default function CustomersClient({ initialCustomers }: { initialCustomers
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredCustomers = initialCustomers.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredCustomers = initialCustomers.filter(c =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (c.phone && c.phone.includes(searchQuery))
   );
 
@@ -22,20 +22,22 @@ export default function CustomersClient({ initialCustomers }: { initialCustomers
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Customers</h1>
           <p className="text-slate-500 font-medium mt-1">Manage your customer database and credit accounts.</p>
         </div>
-        <Button 
-          onClick={() => setShowAddModal(true)} 
-          className="shadow-lg shadow-blue-500/20 whitespace-nowrap"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Customer
-        </Button>
+        <div>
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="shadow-lg shadow-blue-500/20 whitespace-nowrap"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Add Customer
+          </Button>
+        </div>
       </div>
 
       <div className="glass rounded-3xl overflow-hidden shadow-sm border border-slate-100/50 flex flex-col">
         <div className="p-4 md:p-6 bg-white border-b border-slate-100 flex items-center justify-between">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input 
+            <input
               type="text"
               placeholder="Search by name or phone..."
               value={searchQuery}
@@ -79,11 +81,10 @@ export default function CustomersClient({ initialCustomers }: { initialCustomers
                       <div className="text-sm font-medium text-slate-600">{customer.phone || 'N/A'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${
-                        customer.debtBalance > 0 
-                          ? 'bg-red-50 text-red-700 border-red-100' 
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${customer.debtBalance > 0
+                          ? 'bg-red-50 text-red-700 border-red-100'
                           : 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                      }`}>
+                        }`}>
                         ₦{customer.debtBalance.toLocaleString()}
                       </span>
                     </td>
@@ -103,9 +104,9 @@ export default function CustomersClient({ initialCustomers }: { initialCustomers
         </div>
       </div>
 
-      <CustomerFormModal 
-        isOpen={showAddModal} 
-        onClose={() => setShowAddModal(false)} 
+      <CustomerFormModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
       />
     </div>
   );
