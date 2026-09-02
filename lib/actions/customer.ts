@@ -12,7 +12,7 @@ export async function getCustomers() {
 
 export async function createCustomer(data: { name: string; phone?: string }) {
   await connectDB();
-  
+
   if (!data.name) {
     throw new Error('Name is required');
   }
@@ -27,14 +27,14 @@ export async function createCustomer(data: { name: string; phone?: string }) {
 
   revalidatePath('/owner/customers');
   revalidatePath('/manager/customers');
-  revalidatePath('/cashier/pos'); // Cashier POS needs to know about new customers
-  
+  revalidatePath('/cashier/checkout'); // Cashier POS needs to know about new customers
+
   return JSON.parse(JSON.stringify(customer));
 }
 
 export async function updateCustomer(id: string, data: { name: string; phone?: string }) {
   await connectDB();
-  
+
   if (!data.name) {
     throw new Error('Name is required');
   }
@@ -49,17 +49,17 @@ export async function updateCustomer(id: string, data: { name: string; phone?: s
 
   revalidatePath('/owner/customers');
   revalidatePath('/manager/customers');
-  revalidatePath('/cashier/pos');
-  
+  revalidatePath('/cashier/checkout');
+
   return JSON.parse(JSON.stringify(customer));
 }
 
 export async function deleteCustomer(id: string) {
   await connectDB();
-  
+
   const customer = await Customer.findById(id);
   if (!customer) throw new Error('Customer not found');
-  
+
   if (customer.debtBalance > 0) {
     throw new Error('Cannot delete customer with an outstanding debt balance.');
   }
@@ -68,7 +68,7 @@ export async function deleteCustomer(id: string) {
 
   revalidatePath('/owner/customers');
   revalidatePath('/manager/customers');
-  revalidatePath('/cashier/pos');
-  
+  revalidatePath('/cashier/checkout');
+
   return true;
 }

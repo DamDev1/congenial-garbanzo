@@ -68,10 +68,18 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
         </div>
         
         {transaction.customerId && (
-          <div className="flex justify-between items-center text-slate-600 text-xs mt-1">
-            <span>Customer</span>
-            <span className="font-bold">{transaction.customerId.name || 'Credit Account'}</span>
-          </div>
+          <>
+            <div className="flex justify-between items-center text-slate-600 text-xs mt-1">
+              <span>Customer</span>
+              <span className="font-bold">{transaction.customerId.name || 'Credit Account'}</span>
+            </div>
+            {transaction.customerId.debtBalance > 0 && (
+              <div className="flex justify-between items-center text-slate-800 text-xs mt-2 pt-2 border-t border-slate-300">
+                <span className="font-bold">Total Amount Owing</span>
+                <span className="font-bold text-red-600">₦{transaction.customerId.debtBalance.toLocaleString()}</span>
+              </div>
+            )}
+          </>
         )}
 
         <div className="text-center mt-8 text-xs text-slate-500">

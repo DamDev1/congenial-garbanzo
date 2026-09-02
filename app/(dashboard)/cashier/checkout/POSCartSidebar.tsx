@@ -96,11 +96,24 @@ export function POSCartSidebar({
             >
               <option value="">Guest (Cash Only)</option>
               {customers.map(c => (
-                <option key={c._id} value={c._id}>{c.name} {c.phone ? `(${c.phone})` : ''}</option>
+                <option key={c._id} value={c._id}>
+                  {c.name} {c.phone ? `(${c.phone})` : ''} {c.debtBalance > 0 ? `- Owes ₦${c.debtBalance.toLocaleString()}` : ''}
+                </option>
               ))}
             </select>
             <UserIcon className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
           </div>
+
+          {selectedCustomerId && customers.find(c => c._id === selectedCustomerId)?.debtBalance > 0 && (
+            <div className="text-sm font-bold text-red-500 px-1">
+              Outstanding Debt: ₦{customers.find(c => c._id === selectedCustomerId)?.debtBalance.toLocaleString()}
+            </div>
+          )}
+          {selectedCustomerId && customers.find(c => c._id === selectedCustomerId)?.debtBalance === 0 && (
+            <div className="text-sm font-bold text-emerald-500 px-1">
+              No outstanding debt
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <Button 

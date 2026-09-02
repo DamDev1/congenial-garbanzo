@@ -11,7 +11,7 @@ import Customer from '../models/Customer';
 
 export async function getPOSInventory(branchId: string) {
   await connectDB();
-  
+
   // We need all inventory items for this branch, populated with Product and Brand
   // We only want to return items where the product exists.
   const inventory = await Inventory.find({ branchId })
@@ -23,10 +23,10 @@ export async function getPOSInventory(branchId: string) {
       }
     })
     .lean();
-    
+
   // Filter out any broken references
   const validInventory = inventory.filter((item: any) => item.productId && item.productId.brandId);
-  
+
   // Format for the client
   return JSON.parse(JSON.stringify(validInventory.map((item: any) => ({
     _id: item.productId._id,
@@ -43,18 +43,18 @@ export async function createSale(data: {
   branchId: string;
   cashierId: string;
   customerId?: string;
-  items: { productId: string; quantity: number; price: number }[];
+  items: { productId: string; quantity: number; price: number; name: string }[];
   paymentMethod: 'cash' | 'credit';
   totalAmount: number;
 }) {
   await connectDB();
-  
+
   const { branchId, cashierId, customerId, items, paymentMethod, totalAmount } = data;
-  
+
   if (!items || items.length === 0) {
     throw new Error('No items in the cart');
   }
-  
+
   if (paymentMethod === 'credit' && !customerId) {
     throw new Error('A customer must be selected for credit sales');
   }
@@ -78,7 +78,7 @@ export async function createSale(data: {
     paymentMethod,
     status: 'completed'
   });
-  
+
   await transaction.save();
 
   // 3. Deduct inventory
@@ -97,11 +97,15 @@ export async function createSale(data: {
     );
   }
 
-  revalidatePath('/cashier/pos');
+  revalidatePath('/cashier/checkout');
   revalidatePath('/cashier/sales');
   revalidatePath('/cashier');
-  
-  return JSON.parse(JSON.stringify(transaction));
+
+  const populatedTransaction = await Transaction.findById(transaction._id)
+    .populate('customerId')
+    .lean();
+
+  return JSON.parse(JSON.stringify(populatedTransaction));
 }
 
 export async function getCustomers() {

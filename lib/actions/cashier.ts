@@ -70,7 +70,7 @@ export async function getCashierSales(cashierId: string, filter: 'today' | 'week
   }
 
   const sales = await Transaction.find(query)
-    .populate('customerId', 'name phone')
+    .populate('customerId', 'name phone debtBalance')
     .populate({
       path: 'items.productId',
       select: 'name image',

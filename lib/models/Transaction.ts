@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface ITransactionItem {
   productId: mongoose.Types.ObjectId;
+  name: string;
   quantity: number;
   price: number;
 }
@@ -24,6 +25,7 @@ const TransactionItemSchema = new Schema({
     ref: 'Product',
     required: true,
   },
+  name: { type: String, required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
 });
