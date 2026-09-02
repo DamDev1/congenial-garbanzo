@@ -3,9 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { getPOSInventory, getCustomers } from '@/lib/actions/pos';
 import POSClient from './POSClient';
-import User from '@/lib/models/User';
-import connectDB from '@/lib/db/mongoose';
-
+import { getCurrentUser } from '@/lib/actions/user';
 export default async function POSPage() {
   const session = await getServerSession(authOptions);
 
@@ -13,9 +11,7 @@ export default async function POSPage() {
     redirect('/login');
   }
   
-  await connectDB();
-  const user = await User.findById(session.user.id).lean();
-  
+  const user = await getCurrentUser();  
   if (!user || !user.branchId) {
     return (
       <div className="p-12 text-center text-slate-500">

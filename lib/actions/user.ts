@@ -155,5 +155,13 @@ export async function toggleUserStatus(id: string, isActive: boolean) {
 
   revalidatePath('/owner/users');
   revalidatePath('/manager/users');
-  return { success: true, isActive };
+}
+
+export async function getCurrentUser() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return null;
+  
+  await connectToDatabase();
+  const user = await User.findById(session.user.id).lean();
+  return user ? JSON.parse(JSON.stringify(user)) : null;
 }
