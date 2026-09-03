@@ -30,7 +30,7 @@ export default function CustomersClient({
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Customers</h1>
           <p className="text-slate-500 font-medium mt-1">Manage your customer database and credit accounts.</p>
         </div>
-        <div>
+        {/* <div>
           <Button
             onClick={() => setShowAddModal(true)}
             className="shadow-lg shadow-blue-500/20 whitespace-nowrap"
@@ -38,7 +38,7 @@ export default function CustomersClient({
             <Plus className="w-5 h-5 mr-2" />
             Add Customer
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <div className="glass rounded-3xl overflow-hidden shadow-sm border border-slate-100/50 flex flex-col">

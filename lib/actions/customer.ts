@@ -144,10 +144,15 @@ export async function settleCustomerDebt(data: {
 
   await payment.save();
 
+  const populatedPayment = await DebtPayment.findById(payment._id)
+    .populate('cashierId', 'name')
+    .populate('branchId', 'name')
+    .lean();
+
   revalidatePath('/owner/customers');
   revalidatePath('/manager/customers');
   revalidatePath('/cashier/checkout');
   revalidatePath('/cashier/customers');
 
-  return JSON.parse(JSON.stringify(payment));
+  return JSON.parse(JSON.stringify(populatedPayment));
 }
