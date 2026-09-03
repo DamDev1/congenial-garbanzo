@@ -13,7 +13,10 @@ export interface ITransaction extends Document {
   customerId?: mongoose.Types.ObjectId;
   items: ITransactionItem[];
   totalAmount: number;
-  paymentMethod: 'cash' | 'credit';
+  cashAmount: number;
+  transferAmount: number;
+  creditAmount: number;
+  paymentMethod: 'cash' | 'transfer' | 'credit' | 'split';
   status: 'completed' | 'voided';
   createdAt: Date;
   updatedAt: Date;
@@ -55,9 +58,12 @@ const TransactionSchema: Schema = new Schema(
       ],
     },
     totalAmount: { type: Number, required: true },
+    cashAmount: { type: Number, default: 0 },
+    transferAmount: { type: Number, default: 0 },
+    creditAmount: { type: Number, default: 0 },
     paymentMethod: {
       type: String,
-      enum: ['cash', 'credit'],
+      enum: ['cash', 'transfer', 'credit', 'split'],
       required: true,
     },
     status: {
@@ -72,3 +78,4 @@ const TransactionSchema: Schema = new Schema(
 const Transaction: Model<ITransaction> = mongoose.models.Transaction || mongoose.model<ITransaction>('Transaction', TransactionSchema);
 
 export default Transaction;
+

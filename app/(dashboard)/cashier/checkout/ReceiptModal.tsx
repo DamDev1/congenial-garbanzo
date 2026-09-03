@@ -18,72 +18,137 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
     window.print();
   };
 
-  // Extract populated data or fallback
   const items = transaction.items || [];
-  const date = new Date(transaction.createdAt).toLocaleString();
-  const paymentMethod = transaction.paymentMethod.toUpperCase();
+  const date = new Date(transaction.createdAt);
+  const formattedDate = `${date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
+  const saleId = transaction._id?.slice(-10).toUpperCase();
+  const cashierName = transaction.cashierId?.name || 'Staff';
+  const branchName = transaction.branchId?.name || '—';
+
+  // Build charged label
+  const chargedParts: string[] = [];
+  if (transaction.cashAmount > 0) chargedParts.push('Cash');
+  if (transaction.transferAmount > 0) chargedParts.push('Transfer');
+  if (transaction.creditAmount > 0) chargedParts.push('Credit');
+  const chargedLabel = chargedParts.length > 0 ? chargedParts.join(' + ') : 'Cash';
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Transaction Complete">
-      <div className="flex flex-col items-center mb-6 text-emerald-600">
-        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
-          <CheckCircle2 className="w-8 h-8" />
+      <div className="flex flex-col items-center mb-5 text-emerald-600">
+        <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mb-2">
+          <CheckCircle2 className="w-7 h-7" />
         </div>
-        <h2 className="text-xl font-bold text-slate-800">Payment Successful</h2>
+        <h2 className="text-lg font-bold text-slate-800">Payment Successful</h2>
       </div>
 
       {/* Printable Receipt Area */}
-      <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6 font-mono text-sm" id="printable-receipt">
-        <div className="text-center mb-6">
-          <h3 className="font-bold text-lg text-slate-900">De-Luv Limited</h3>
-          <p className="text-slate-500 text-xs mt-1">Receipt #{transaction._id?.slice(-8).toUpperCase()}</p>
-          <p className="text-slate-500 text-xs">{date}</p>
+      <div className="bg-white p-5 rounded-xl border border-slate-200 mb-5 font-mono text-[13px] leading-relaxed text-slate-800 shadow-inner" id="printable-receipt">
+        
+        {/* Header */}
+        <div className="text-center mb-4 pb-3 border-b border-dashed border-slate-300">
+          <h3 className="font-black text-base tracking-wide text-slate-900 uppercase">De-Luv Limited</h3>
         </div>
 
-        <div className="border-t border-b border-slate-300 py-4 my-4 space-y-3">
-          {items.map((item: any, idx: number) => {
-            const name = item.productId?.name || item.name || 'Unknown Product';
-            return (
-              <div key={idx} className="flex justify-between items-start">
-                <div className="flex-1 pr-4">
-                  <span className="font-semibold">{name}</span>
-                  <div className="text-slate-500 text-xs">
-                    {item.quantity} x ₦{item.price.toLocaleString()}
-                  </div>
-                </div>
-                <span className="font-bold">₦{(item.quantity * item.price).toLocaleString()}</span>
-              </div>
-            );
-          })}
+        {/* Sale Info */}
+        <div className="mb-3 pb-3 border-b border-dashed border-slate-300 space-y-0.5">
+          <div className="flex justify-between">
+            <span className="text-slate-500">Sale ID</span>
+            <span className="font-bold">{saleId}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-500">Cashier</span>
+            <span className="font-bold">{cashierName}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-500">Branch</span>
+            <span className="font-bold">{branchName}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-500">Date</span>
+            <span className="font-bold">{formattedDate}</span>
+          </div>
         </div>
 
-        <div className="flex justify-between items-center text-lg font-bold text-slate-900 mb-2">
-          <span>Total</span>
-          <span>₦{transaction.totalAmount.toLocaleString()}</span>
+        {/* Items Table */}
+        <table className="w-full border-collapse mb-3">
+          <thead>
+            <tr className="border-y border-slate-400 text-[11px] uppercase text-slate-600 tracking-wider">
+              <th className="py-1.5 text-left w-[36px]">Qty</th>
+              <th className="py-1.5 text-left">Item</th>
+              <th className="py-1.5 text-right w-[80px]">Price</th>
+              <th className="py-1.5 text-right w-[90px]">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item: any, idx: number) => {
+              const name = item.productId?.name || item.name || 'Unknown';
+              const amount = item.quantity * item.price;
+              return (
+                <tr key={idx} className="border-b border-slate-100 last:border-b-0">
+                  <td className="py-1.5 text-left font-bold">{item.quantity}</td>
+                  <td className="py-1.5 text-left font-semibold truncate max-w-[120px]">{name}</td>
+                  <td className="py-1.5 text-right tabular-nums">{item.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
+                  <td className="py-1.5 text-right font-bold tabular-nums">{amount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {/* Total */}
+        <div className="border-y border-slate-400 py-2 mb-2">
+          <div className="flex justify-between items-center">
+            <span className="font-bold text-sm">Total</span>
+            <span className="font-black text-base">₦{transaction.totalAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
+          </div>
         </div>
-        
-        <div className="flex justify-between items-center text-slate-600 text-xs">
-          <span>Payment Method</span>
-          <span className="font-bold">{paymentMethod}</span>
+
+        {/* Payment Breakdown */}
+        <div className="mb-2 space-y-0.5">
+          {transaction.cashAmount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-slate-500">Charged (Cash)</span>
+              <span className="font-bold">₦{transaction.cashAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
+            </div>
+          )}
+          {transaction.transferAmount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-slate-500">Charged (Transfer)</span>
+              <span className="font-bold">₦{transaction.transferAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
+            </div>
+          )}
+          {transaction.creditAmount > 0 && (
+            <div className="flex justify-between text-amber-700">
+              <span>Credit (Owed)</span>
+              <span className="font-bold">₦{transaction.creditAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
+            </div>
+          )}
         </div>
-        
+
+        {/* Customer & Debt */}
         {transaction.customerId && (
-          <>
-            <div className="flex justify-between items-center text-slate-600 text-xs mt-1">
-              <span>Customer</span>
+          <div className="border-t border-dashed border-slate-300 pt-2 mb-2 space-y-0.5">
+            <div className="flex justify-between">
+              <span className="text-slate-500">Customer</span>
               <span className="font-bold">{transaction.customerId.name || 'Credit Account'}</span>
             </div>
             {transaction.customerId.debtBalance > 0 && (
-              <div className="flex justify-between items-center text-slate-800 text-xs mt-2 pt-2 border-t border-slate-300">
-                <span className="font-bold">Total Amount Owing</span>
-                <span className="font-bold text-red-600">₦{transaction.customerId.debtBalance.toLocaleString()}</span>
+              <div className="flex justify-between text-red-600">
+                <span className="font-bold">Total Owing</span>
+                <span className="font-bold">₦{transaction.customerId.debtBalance.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
               </div>
             )}
-          </>
+          </div>
         )}
 
-        <div className="text-center mt-8 text-xs text-slate-500">
-          <p>Thank you for your patronage!</p>
+        {/* Footer */}
+        <div className="text-center mt-4 pt-3 border-t border-dashed border-slate-300 space-y-1">
+          <p className="font-bold uppercase text-[11px] tracking-wide">Thanks for your patronage</p>
+          <p className="text-[10px] text-slate-500 leading-tight">
+            Please confirm items before leaving. No<br />
+            refund/exchange after purchase.
+          </p>
+          <p className="text-[10px] text-slate-400 mt-2">Powered by De-Luv POS</p>
         </div>
       </div>
 
@@ -122,6 +187,11 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
             padding: 20px;
             background: white;
             border: none;
+            box-shadow: none;
+            font-size: 12px;
+          }
+          #printable-receipt table {
+            width: 100%;
           }
         }
       `}</style>

@@ -5,6 +5,7 @@ import { createSale } from '@/lib/actions/pos';
 import { ReceiptModal } from './ReceiptModal';
 import { POSProductGrid } from './POSProductGrid';
 import { POSCartSidebar } from './POSCartSidebar';
+import { CheckoutModal } from './CheckoutModal';
 
 interface POSClientProps {
   inventory: any[];
@@ -30,6 +31,11 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
   const [completedTransaction, setCompletedTransaction] = useState<any>(null);
   
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Split payment amounts
+  const [cashAmount, setCashAmount] = useState<number>(0);
+  const [transferAmount, setTransferAmount] = useState<number>(0);
 
   const uniqueBrands = useMemo(() => {
     const brands = new Set(inventory.map(item => item.brandName));
@@ -55,6 +61,7 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const creditAmount = Math.max(0, cartTotal - cashAmount - transferAmount);
 
   const addToCart = (item: any) => {
     if (item.stockQuantity <= 0) return;
@@ -96,10 +103,10 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
     setCart(prev => prev.filter(item => item.productId !== productId));
   };
 
-  const handleCheckout = async (paymentMethod: 'cash' | 'credit') => {
+  const handleCheckout = async () => {
     if (cart.length === 0) return;
-    if (paymentMethod === 'credit' && !selectedCustomerId) {
-      alert('Please select a customer for credit checkout.');
+    if (creditAmount > 0 && !selectedCustomerId) {
+      alert('Please select a customer — there is an outstanding credit amount.');
       return;
     }
 
@@ -108,15 +115,20 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
       const transaction = await createSale({
         branchId,
         cashierId,
-        customerId: paymentMethod === 'credit' ? selectedCustomerId : undefined,
+        customerId: selectedCustomerId || undefined,
         items: cart.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.price, name: i.name })),
-        paymentMethod,
-        totalAmount: cartTotal
+        totalAmount: cartTotal,
+        cashAmount,
+        transferAmount,
+        creditAmount
       });
       
       setCompletedTransaction(transaction);
       setCart([]);
       setSelectedCustomerId('');
+      setCashAmount(0);
+      setTransferAmount(0);
+      setIsCheckoutOpen(false);
     } catch (error: any) {
       alert(error.message || 'Failed to complete transaction');
     } finally {
@@ -141,13 +153,26 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
         cart={cart}
         cartItemCount={cartItemCount}
         cartTotal={cartTotal}
+        isProcessing={isProcessing}
+        onCheckoutOpen={() => setIsCheckoutOpen(true)}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
+      />
+
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        cartTotal={cartTotal}
         customers={customers}
         selectedCustomerId={selectedCustomerId}
         setSelectedCustomerId={setSelectedCustomerId}
         isProcessing={isProcessing}
         handleCheckout={handleCheckout}
-        updateQuantity={updateQuantity}
-        removeFromCart={removeFromCart}
+        cashAmount={cashAmount}
+        setCashAmount={setCashAmount}
+        transferAmount={transferAmount}
+        setTransferAmount={setTransferAmount}
+        creditAmount={creditAmount}
       />
 
       <ReceiptModal 

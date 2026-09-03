@@ -8,6 +8,7 @@ import Brand from '../models/Brand';
 import Inventory from '../models/Inventory';
 import Transaction from '../models/Transaction';
 import Customer from '../models/Customer';
+import Branch from '../models/Branch';
 
 export async function getPOSInventory(branchId: string) {
   await connectDB();
@@ -44,19 +45,42 @@ export async function createSale(data: {
   cashierId: string;
   customerId?: string;
   items: { productId: string; quantity: number; price: number; name: string }[];
-  paymentMethod: 'cash' | 'credit';
   totalAmount: number;
+  cashAmount: number;
+  transferAmount: number;
+  creditAmount: number;
 }) {
   await connectDB();
 
-  const { branchId, cashierId, customerId, items, paymentMethod, totalAmount } = data;
+  const { branchId, cashierId, customerId, items, totalAmount, cashAmount, transferAmount, creditAmount } = data;
 
   if (!items || items.length === 0) {
     throw new Error('No items in the cart');
   }
 
-  if (paymentMethod === 'credit' && !customerId) {
-    throw new Error('A customer must be selected for credit sales');
+  // Validate that the payment amounts sum to the total
+  const paymentSum = cashAmount + transferAmount + creditAmount;
+  if (Math.abs(paymentSum - totalAmount) > 1) {
+    throw new Error('Payment amounts must equal the total amount');
+  }
+
+  // If there's a credit portion, a customer is required
+  if (creditAmount > 0 && !customerId) {
+    throw new Error('A customer must be selected when there is an amount on credit');
+  }
+
+  // Derive the payment method label
+  const nonZeroMethods = [
+    cashAmount > 0 && 'cash',
+    transferAmount > 0 && 'transfer',
+    creditAmount > 0 && 'credit',
+  ].filter(Boolean);
+
+  let paymentMethod: 'cash' | 'transfer' | 'credit' | 'split';
+  if (nonZeroMethods.length > 1) {
+    paymentMethod = 'split';
+  } else {
+    paymentMethod = (nonZeroMethods[0] as 'cash' | 'transfer' | 'credit') || 'cash';
   }
 
   // 1. Verify stock levels for all items first
@@ -75,6 +99,9 @@ export async function createSale(data: {
     customerId: customerId || undefined,
     items,
     totalAmount,
+    cashAmount,
+    transferAmount,
+    creditAmount,
     paymentMethod,
     status: 'completed'
   });
@@ -89,11 +116,11 @@ export async function createSale(data: {
     );
   }
 
-  // 4. Update customer debt if credit
-  if (paymentMethod === 'credit' && customerId) {
+  // 4. Update customer debt only by the credit portion
+  if (creditAmount > 0 && customerId) {
     await Customer.findByIdAndUpdate(
       customerId,
-      { $inc: { debtBalance: totalAmount } }
+      { $inc: { debtBalance: creditAmount } }
     );
   }
 
@@ -103,6 +130,8 @@ export async function createSale(data: {
 
   const populatedTransaction = await Transaction.findById(transaction._id)
     .populate('customerId')
+    .populate('cashierId', 'name')
+    .populate('branchId', 'name')
     .lean();
 
   return JSON.parse(JSON.stringify(populatedTransaction));

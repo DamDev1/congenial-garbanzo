@@ -61,7 +61,7 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
   const query = {
     branchId,
     createdAt: { $gte: startDate },
-    status: 'completed'
+    status: 'completed' as const
   };
 
   const transactions = await Transaction.find(query)
@@ -74,8 +74,8 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
   // Calculate outstanding debt from credit transactions
   const debtQuery = {
     branchId,
-    paymentMethod: 'credit',
-    status: 'completed'
+    paymentMethod: 'credit' as const,
+    status: 'completed' as const
     // Depending on schema, we might need to check if it's paid off, 
     // but for now, total credit amount issued is the debt.
   };
