@@ -1,21 +1,30 @@
 'use client';
 
 import { useState } from 'react';
-import { MoreVertical, Edit2, Trash2, AlertTriangle } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, AlertTriangle, Clock } from 'lucide-react';
 import { deleteCustomer } from '@/lib/actions/customer';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { CustomerFormModal } from './CustomerFormModal';
+import { SettleDebtModal } from './SettleDebtModal';
+import { CustomerHistoryModal } from './CustomerHistoryModal';
+import { Banknote } from 'lucide-react';
 
 interface CustomerRowActionsProps {
   customer: any;
+  cashierId?: string;
+  branchId?: string;
 }
 
-export default function CustomerRowActions({ customer }: CustomerRowActionsProps) {
+export default function CustomerRowActions({ customer, cashierId, branchId }: CustomerRowActionsProps) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showSettleDebtModal, setShowSettleDebtModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const isCashier = !!cashierId;
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -40,6 +49,28 @@ export default function CustomerRowActions({ customer }: CustomerRowActionsProps
       >
         {(close) => (
           <>
+            {isCashier && customer.debtBalance > 0 && branchId && (
+              <button
+                onClick={() => {
+                  setShowSettleDebtModal(true);
+                  close();
+                }}
+                className="w-full flex items-center gap-2 px-4 py-2 text-sm font-bold text-emerald-600 hover:bg-emerald-50 transition-colors"
+              >
+                <Banknote className="w-4 h-4" />
+                Settle Debt
+              </button>
+            )}
+            <button
+              onClick={() => {
+                setShowHistoryModal(true);
+                close();
+              }}
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+            >
+              <Clock className="w-4 h-4" />
+              View History
+            </button>
             <button
               onClick={() => {
                 setShowEditModal(true);
@@ -47,28 +78,46 @@ export default function CustomerRowActions({ customer }: CustomerRowActionsProps
               }}
               className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              <Edit2 className="w-4 h-4 text-blue-500" />
+              <Edit2 className="w-4 h-4 text-slate-500" />
               Edit
             </button>
-            <button
-              onClick={() => {
-                setShowDeleteModal(true);
-                close();
-              }}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </button>
+            {!isCashier && (
+              <button
+                onClick={() => {
+                  setShowDeleteModal(true);
+                  close();
+                }}
+                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </button>
+            )}
           </>
         )}
       </Dropdown>
+
+      <CustomerHistoryModal
+        isOpen={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        customer={customer}
+      />
 
       <CustomerFormModal 
         isOpen={showEditModal} 
         onClose={() => setShowEditModal(false)} 
         customer={customer} 
       />
+
+      {cashierId && branchId && (
+        <SettleDebtModal
+          isOpen={showSettleDebtModal}
+          onClose={() => setShowSettleDebtModal(false)}
+          customer={customer}
+          cashierId={cashierId}
+          branchId={branchId}
+        />
+      )}
 
       <Modal 
         isOpen={showDeleteModal} 

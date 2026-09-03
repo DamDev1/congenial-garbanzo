@@ -6,7 +6,15 @@ import { Button } from '@/components/ui/Button';
 import { CustomerFormModal } from './CustomerFormModal';
 import CustomerRowActions from './CustomerRowActions';
 
-export default function CustomersClient({ initialCustomers }: { initialCustomers: any[] }) {
+export default function CustomersClient({ 
+  initialCustomers, 
+  cashierId, 
+  branchId 
+}: { 
+  initialCustomers: any[]; 
+  cashierId?: string;
+  branchId?: string;
+}) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -94,7 +102,11 @@ export default function CustomersClient({ initialCustomers }: { initialCustomers
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <CustomerRowActions customer={customer} />
+                      <CustomerRowActions 
+                        customer={customer} 
+                        cashierId={cashierId}
+                        branchId={branchId}
+                      />
                     </td>
                   </tr>
                 ))
