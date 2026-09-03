@@ -2,6 +2,8 @@
 
 import connectDB from '../db/mongoose';
 import Transaction from '../models/Transaction';
+import '../models/Branch';
+import '../models/User';
 import mongoose from 'mongoose';
 
 export async function getCashierStats(cashierId: string) {
@@ -71,6 +73,8 @@ export async function getCashierSales(cashierId: string, filter: 'today' | 'week
 
   const sales = await Transaction.find(query)
     .populate('customerId', 'name phone debtBalance')
+    .populate('cashierId', 'name')
+    .populate('branchId', 'name')
     .populate({
       path: 'items.productId',
       select: 'name image',

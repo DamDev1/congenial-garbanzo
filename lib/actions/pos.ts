@@ -8,7 +8,8 @@ import Brand from '../models/Brand';
 import Inventory from '../models/Inventory';
 import Transaction from '../models/Transaction';
 import Customer from '../models/Customer';
-import Branch from '../models/Branch';
+import '../models/Branch';
+import '../models/User';
 
 export async function getPOSInventory(branchId: string) {
   await connectDB();
