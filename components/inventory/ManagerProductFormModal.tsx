@@ -1,19 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { createProduct } from '@/lib/actions/product';
+import { createProduct, updateProduct } from '@/lib/actions/product';
 
 interface ManagerProductFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   brands: any[];
   currentUser: any;
+  product?: any;
 }
 
-export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser }: ManagerProductFormModalProps) {
+export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser, product }: ManagerProductFormModalProps) {
   const [name, setName] = useState('');
   const [brandId, setBrandId] = useState('');
   const [newBrandName, setNewBrandName] = useState('');
@@ -25,6 +26,26 @@ export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (isOpen && product) {
+      setName(product.name);
+      setBrandId(product.brandId?._id || product.brandId || '');
+      setCostPrice(product.costPrice?.toString() || '');
+      setSellingPrice(product.sellingPrice?.toString() || '');
+      setPackSize(product.packSize?.toString() || '');
+      setInitialStock('0');
+    } else if (isOpen && !product) {
+      setName('');
+      setBrandId('');
+      setNewBrandName('');
+      setCostPrice('');
+      setSellingPrice('');
+      setPackSize('');
+      setInitialStock('0');
+    }
+    setError('');
+  }, [isOpen, product]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -34,7 +55,7 @@ export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser }
       if (!brandId && !newBrandName) {
         throw new Error('Please select a brand or create a new one.');
       }
-      if (!currentUser.branchId) {
+      if (!currentUser.branchId && !product) {
         throw new Error('You are not assigned to a branch.');
       }
 
@@ -46,27 +67,32 @@ export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser }
         finalBrandName = selectedBrand ? selectedBrand.name : '';
       }
 
-      const finalProductName = finalBrandName ? `${finalBrandName} - ${name}` : name;
+      let finalProductName = name;
+      if (!product && finalBrandName) {
+        finalProductName = `${finalBrandName} - ${name}`;
+      }
 
-      await createProduct({
-        name: finalProductName,
-        brandId: brandId === 'NEW' ? undefined : brandId,
-        newBrandName: brandId === 'NEW' ? newBrandName : undefined,
-        costPrice: Number(costPrice),
-        sellingPrice: Number(sellingPrice),
-        packSize: Number(packSize),
-        initialStock: Number(initialStock),
-        branchId: currentUser.branchId
-      });
-      
-      // Reset form on success
-      setName('');
-      setBrandId('');
-      setNewBrandName('');
-      setCostPrice('');
-      setSellingPrice('');
-      setPackSize('');
-      setInitialStock('0');
+      if (product) {
+        await updateProduct(product._id, {
+          name: finalProductName,
+          brandId: brandId === 'NEW' ? undefined : brandId,
+          newBrandName: brandId === 'NEW' ? newBrandName : undefined,
+          costPrice: Number(costPrice),
+          sellingPrice: Number(sellingPrice),
+          packSize: Number(packSize),
+        });
+      } else {
+        await createProduct({
+          name: finalProductName,
+          brandId: brandId === 'NEW' ? undefined : brandId,
+          newBrandName: brandId === 'NEW' ? newBrandName : undefined,
+          costPrice: Number(costPrice),
+          sellingPrice: Number(sellingPrice),
+          packSize: Number(packSize),
+          initialStock: Number(initialStock),
+          branchId: currentUser.branchId
+        });
+      }
       
       onClose();
     } catch (err: any) {
@@ -77,7 +103,7 @@ export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={() => !isSubmitting && onClose()} title="Add New Product">
+    <Modal isOpen={isOpen} onClose={() => !isSubmitting && onClose()} title={product ? "Edit Product" : "Add New Product"}>
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
           <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
@@ -150,22 +176,24 @@ export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser }
           />
         </div>
 
-        <div className="border-t border-slate-100 pt-4 mt-2">
-          <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-            <Input
-              label="Initial Stock Quantity (Packs)"
-              type="number"
-              value={initialStock}
-              onChange={(e) => setInitialStock(e.target.value)}
-              required
-              min="0"
-              placeholder="How many packs are arriving now?"
-            />
-            <p className="text-xs text-slate-500 mt-2">
-              This quantity will be instantly added to your branch's inventory.
-            </p>
+        {!product && (
+          <div className="border-t border-slate-100 pt-4 mt-2">
+            <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+              <Input
+                label="Initial Stock Quantity (Packs)"
+                type="number"
+                value={initialStock}
+                onChange={(e) => setInitialStock(e.target.value)}
+                required
+                min="0"
+                placeholder="How many packs are arriving now?"
+              />
+              <p className="text-xs text-slate-500 mt-2">
+                This quantity will be instantly added to your branch's inventory.
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center justify-end gap-3 pt-4">
           <Button 
@@ -177,7 +205,7 @@ export function ManagerProductFormModal({ isOpen, onClose, brands, currentUser }
             Cancel
           </Button>
           <Button type="submit" isLoading={isSubmitting}>
-            Add Product to Catalog
+            {product ? 'Save Changes' : 'Add Product to Catalog'}
           </Button>
         </div>
       </form>

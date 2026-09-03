@@ -120,6 +120,9 @@ export async function updateProduct(id: string, data: {
   }
 
   revalidatePath('/owner/products');
+  revalidatePath('/manager/inventory');
+  revalidatePath('/cashier/checkout');
+  
   return JSON.parse(JSON.stringify(updatedProduct));
 }
 

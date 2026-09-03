@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Package, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ManagerProductFormModal } from './ManagerProductFormModal';
+import ManagerInventoryRowActions from './ManagerInventoryRowActions';
 
 interface ManagerInventoryClientProps {
   initialInventory: any[];
@@ -75,12 +76,13 @@ export default function ManagerInventoryClient({ initialInventory, brands, curre
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Pack Size</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Selling Price</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">In Stock</th>
+                <th className="px-6 py-4 text-right"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredInventory.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3">
                         <Package className="w-8 h-8 text-slate-400" />
@@ -118,6 +120,13 @@ export default function ManagerInventoryClient({ initialInventory, brands, curre
                         }`}>
                         {item.quantity} packs
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <ManagerInventoryRowActions 
+                        item={item} 
+                        brands={brands} 
+                        currentUser={currentUser} 
+                      />
                     </td>
                   </tr>
                 ))
