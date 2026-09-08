@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, Store, Package, ArrowRightLeft, LogOut, UserSquare, Receipt } from 'lucide-react';
+import { useSidebarStore } from '@/lib/store/useSidebarStore';
+import { Home, Users, Store, Package, ArrowRightLeft, LogOut, UserSquare, Receipt, X } from 'lucide-react';
 
 const ownerNavItems = [
   { href: '/owner', label: 'Dashboard', icon: Home },
@@ -32,13 +34,35 @@ const cashierNavItems = [
 
 export function Sidebar({ userRole }: { userRole: string }) {
   const pathname = usePathname();
+  const { isOpen, close } = useSidebarStore();
+
+  useEffect(() => {
+    close();
+  }, [pathname, close]);
 
   let navItems = cashierNavItems;
   if (userRole === 'owner') navItems = ownerNavItems;
   if (userRole === 'manager') navItems = managerNavItems;
 
   return (
-    <aside className="w-[280px] bg-slate-950 text-slate-100 hidden md:flex flex-col m-4 rounded-3xl shadow-2xl relative overflow-hidden">
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden"
+          onClick={close}
+        />
+      )}
+      
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-[280px] bg-slate-950 text-slate-100 flex flex-col 
+        transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:m-4 md:rounded-3xl shadow-2xl overflow-hidden
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        {/* Add mobile close button */}
+        <button onClick={close} className="md:hidden absolute top-6 right-6 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors z-50">
+          <X className="w-5 h-5" />
+        </button>
       <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
 
@@ -48,7 +72,7 @@ export function Sidebar({ userRole }: { userRole: string }) {
         </h1>
       </div>
 
-      <nav className="flex-1 py-6 px-4 relative z-10">
+      <nav className="flex-1 overflow-y-auto py-6 px-4 relative z-10">
         <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-4">
           Menu
         </div>
@@ -93,5 +117,6 @@ export function Sidebar({ userRole }: { userRole: string }) {
         </div>
       </div>
     </aside>
+    </>
   );
 }
