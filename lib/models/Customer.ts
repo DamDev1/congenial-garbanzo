@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface ICustomer extends Document {
   name: string;
   phone?: string;
+  branchId?: mongoose.Types.ObjectId;
   debtBalance: number;
   createdAt: Date;
   updatedAt: Date;
@@ -12,6 +13,7 @@ const CustomerSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     phone: { type: String },
+    branchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch' },
     debtBalance: { type: Number, required: true, default: 0 },
   },
   { timestamps: true }

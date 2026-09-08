@@ -9,7 +9,10 @@ import '../models/User';
 
 export async function getCustomers() {
   await connectDB();
-  const customers = await Customer.find().sort({ createdAt: -1 }).lean();
+  const customers = await Customer.find()
+    .populate('branchId', 'name')
+    .sort({ createdAt: -1 })
+    .lean();
   return JSON.parse(JSON.stringify(customers));
 }
 
@@ -36,7 +39,7 @@ export async function getCustomerHistory(customerId: string) {
   return JSON.parse(JSON.stringify(history));
 }
 
-export async function createCustomer(data: { name: string; phone?: string }) {
+export async function createCustomer(data: { name: string; phone?: string; branchId?: string }) {
   await connectDB();
 
   if (!data.name) {
@@ -46,6 +49,7 @@ export async function createCustomer(data: { name: string; phone?: string }) {
   const customer = new Customer({
     name: data.name,
     phone: data.phone,
+    branchId: data.branchId,
     debtBalance: 0,
   });
 
