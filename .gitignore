@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# serwist / service worker
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+
+# Seed scripts
+scripts/seed-products.ts
