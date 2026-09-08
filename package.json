@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ducanh2912/next-pwa": "^10.2.9",
+    "@serwist/next": "^9.5.12",
     "bcryptjs": "^3.0.3",
     "lucide-react": "^1.38.0",
     "mongoose": "^9.9.4",
@@ -17,6 +17,7 @@
     "next-auth": "^4.24.15",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "serwist": "^9.5.12",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
