@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "De-Luv Inventory System",
+  title: "De-Luv Investment Limited Inventory System",
   description: "Soft drinks inventory management system",
 };
 
