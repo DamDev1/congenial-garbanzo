@@ -44,7 +44,7 @@ export function Sidebar({ userRole }: { userRole: string }) {
 
       <div className="h-24 flex items-center px-8 relative z-10">
         <h1 className="text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400 drop-shadow-sm">
-          De-Luv Limited
+         De-Luv Investment
         </h1>
       </div>
 

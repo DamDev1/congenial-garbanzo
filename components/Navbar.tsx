@@ -4,7 +4,7 @@ export function Navbar({ user }: { user: { name?: string | null; role?: string }
   return (
     <header className="h-24 px-6 md:px-10 flex items-center justify-between sticky top-0 z-40 bg-slate-50/80 backdrop-blur-md">
       <div className="md:hidden font-extrabold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-emerald-500">
-        De-Luv POS
+        De-Luv Investment
       </div>
       
       <div className="hidden md:flex flex-col">

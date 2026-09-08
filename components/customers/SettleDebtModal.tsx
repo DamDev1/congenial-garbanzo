@@ -97,7 +97,7 @@ export function SettleDebtModal({ isOpen, onClose, customer, cashierId, branchId
             
             {/* Header */}
             <div className="text-center mb-4 pb-3 border-b border-dashed border-slate-300">
-              <h3 className="font-black text-base tracking-wide text-slate-900 uppercase">De-Luv Limited</h3>
+              <h3 className="font-black text-base tracking-wide text-slate-900 uppercase">De-Luv Investment</h3>
               <p className="text-[11px] text-slate-600 uppercase tracking-widest mt-1">Debt Payment Receipt</p>
             </div>
 
@@ -124,7 +124,6 @@ export function SettleDebtModal({ isOpen, onClose, customer, cashierId, branchId
               </div>
             </div>
 
-            {/* Payment Details */}
             <div className="border-b border-dashed border-slate-300 pb-3 mb-3 space-y-1.5">
               <div className="flex justify-between items-center text-sm">
                 <span className="font-bold text-slate-500 uppercase">Amount Paid</span>
@@ -147,7 +146,6 @@ export function SettleDebtModal({ isOpen, onClose, customer, cashierId, branchId
               </div>
             </div>
 
-            {/* Customer Status */}
             <div className="mb-2 space-y-0.5">
               <div className="flex justify-between">
                 <span className="text-slate-500">Customer</span>
@@ -159,10 +157,9 @@ export function SettleDebtModal({ isOpen, onClose, customer, cashierId, branchId
               </div>
             </div>
 
-            {/* Footer */}
             <div className="text-center mt-4 pt-3 border-t border-dashed border-slate-300 space-y-1">
               <p className="font-bold uppercase text-[11px] tracking-wide">Thanks for your payment</p>
-              <p className="text-[10px] text-slate-400 mt-2">Powered by De-Luv POS</p>
+              <p className="text-[10px] text-slate-400 mt-2">Powered by De-Luv Investment</p>
             </div>
           </div>
 
