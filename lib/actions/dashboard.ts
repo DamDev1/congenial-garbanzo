@@ -22,10 +22,53 @@ export async function getOwnerDashboardStats() {
   const userCount = await User.countDocuments();
   const productCount = await Product.countDocuments();
 
+  // Today's total sales
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todaySalesAgg = await Transaction.aggregate([
+    {
+      $match: {
+        status: 'completed',
+        createdAt: { $gte: todayStart },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$totalAmount' },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const todaySalesTotal = todaySalesAgg[0]?.total ?? 0;
+  const todaySalesCount = todaySalesAgg[0]?.count ?? 0;
+
+  // Total outstanding debt (credit transactions)
+  const totalDebtAgg = await Transaction.aggregate([
+    {
+      $match: {
+        status: 'completed',
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$creditAmount' },
+      },
+    },
+  ]);
+
+  const totalDebt = totalDebtAgg[0]?.total ?? 0;
+
   return {
     branchCount,
     userCount,
     productCount,
+    todaySalesTotal,
+    todaySalesCount,
+    totalDebt,
   };
 }
 

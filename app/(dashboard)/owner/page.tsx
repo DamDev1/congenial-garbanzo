@@ -21,7 +21,22 @@ export default async function OwnerDashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {/* Stat Card 1 */}
+        {/* Stat Card 1 - Today's Sales */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group md:col-span-2 lg:col-span-1">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+              <TrendingUp className="w-6 h-6" />
+            </div>
+            <h3 className="font-semibold text-slate-600">Today&apos;s Sales</h3>
+          </div>
+          <div className="flex items-end justify-between mt-2">
+            <div className="text-4xl font-extrabold text-slate-800">₦{stats.todaySalesTotal.toLocaleString()}</div>
+            <span className="text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">{stats.todaySalesCount} sale{stats.todaySalesCount !== 1 ? 's' : ''}</span>
+          </div>
+        </div>
+
+        {/* Stat Card 2 - Branches */}
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
@@ -36,22 +51,7 @@ export default async function OwnerDashboardPage() {
           </div>
         </div>
 
-        {/* Stat Card 2 */}
-        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
-              <Users className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-slate-600">Total Staff</h3>
-          </div>
-          <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-extrabold text-slate-800">{stats.userCount}</div>
-            <span className="text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">Registered</span>
-          </div>
-        </div>
-
-        {/* Stat Card 3 */}
+        {/* Stat Card 3 - Products */}
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
@@ -66,17 +66,17 @@ export default async function OwnerDashboardPage() {
           </div>
         </div>
 
-        {/* Stat Card 4 */}
+        {/* Stat Card 4 - Total Debt */}
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
-              <TrendingUp className="w-6 h-6" />
+              <Users className="w-6 h-6" />
             </div>
             <h3 className="font-semibold text-slate-600">Total Debt</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-extrabold text-slate-800">₦0</div>
+            <div className="text-4xl font-extrabold text-slate-800">₦{stats.totalDebt.toLocaleString()}</div>
             <span className="text-sm font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-md">Owed</span>
           </div>
         </div>
