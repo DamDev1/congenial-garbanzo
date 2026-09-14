@@ -4,6 +4,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import connectToDatabase from '@/lib/db/mongoose';
 import Branch from '@/lib/models/Branch';
+import Product from '@/lib/models/Product';
+import Inventory from '@/lib/models/Inventory';
 import { revalidatePath } from 'next/cache';
 
 export async function createBranch(formData: FormData) {
@@ -22,7 +24,18 @@ export async function createBranch(formData: FormData) {
 
   await connectToDatabase();
 
-  await Branch.create({ name, location });
+  const newBranch = await Branch.create({ name, location });
+
+  // Initialize inventory for all existing products at this new branch
+  const allProducts = await Product.find({}).select('_id').lean();
+  if (allProducts.length > 0) {
+    const inventoryDocs = allProducts.map(p => ({
+      branchId: newBranch._id,
+      productId: p._id,
+      quantity: 0
+    }));
+    await Inventory.insertMany(inventoryDocs);
+  }
 
   revalidatePath('/owner/branches');
 }

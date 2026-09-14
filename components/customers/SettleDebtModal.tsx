@@ -182,7 +182,14 @@ export function SettleDebtModal({ isOpen, onClose, customer, cashierId, branchId
           </div>
 
           <style jsx global>{`
+            @page {
+              margin: 0;
+            }
             @media print {
+              html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+              }
               body * {
                 visibility: hidden;
               }
@@ -193,13 +200,14 @@ export function SettleDebtModal({ isOpen, onClose, customer, cashierId, branchId
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 100%;
+                width: 70mm;
+                max-width: 100%;
                 margin: 0;
-                padding: 20px;
+                padding: 2mm;
                 background: white;
                 border: none;
                 box-shadow: none;
-                font-size: 12px;
+                font-size: 11px;
               }
             }
           `}</style>

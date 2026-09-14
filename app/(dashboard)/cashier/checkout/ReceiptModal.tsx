@@ -46,7 +46,7 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
         
         {/* Header */}
         <div className="text-center mb-4 pb-3 border-b border-dashed border-slate-300">
-          <h3 className="font-black text-base tracking-wide text-slate-900 uppercase">De-Luv Limited</h3>
+          <h3 className="font-black text-base tracking-wide text-slate-900 uppercase">De-Luv Investment Limited</h3>
         </div>
 
         {/* Sale Info */}
@@ -69,14 +69,13 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
           </div>
         </div>
 
-        {/* Items Table */}
-        <table className="w-full border-collapse mb-3">
+        <table className="w-full border-collapse border border-black mb-3 text-black">
           <thead>
-            <tr className="border-y border-slate-400 text-[11px] uppercase text-slate-600 tracking-wider">
-              <th className="py-1.5 text-left w-[36px]">Qty</th>
-              <th className="py-1.5 text-left">Item</th>
-              <th className="py-1.5 text-right w-[80px]">Price</th>
-              <th className="py-1.5 text-right w-[90px]">Amount</th>
+            <tr className="border-b border-black text-[12px] font-bold uppercase tracking-wider">
+              <th className="py-1 px-1.5 border-r border-black text-center w-[36px]">QTY</th>
+              <th className="py-1 px-1.5 border-r border-black text-left">ITEM</th>
+              <th className="py-1 px-1.5 border-r border-black text-right w-[65px]">PRICE</th>
+              <th className="py-1 px-1.5 text-right w-[75px]">AMOUNT</th>
             </tr>
           </thead>
           <tbody>
@@ -84,18 +83,17 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
               const name = item.productId?.name || item.name || 'Unknown';
               const amount = item.quantity * item.price;
               return (
-                <tr key={idx} className="border-b border-slate-100 last:border-b-0">
-                  <td className="py-1.5 text-left font-bold">{item.quantity}</td>
-                  <td className="py-1.5 text-left font-semibold truncate max-w-[120px]">{name}</td>
-                  <td className="py-1.5 text-right tabular-nums">{item.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
-                  <td className="py-1.5 text-right font-bold tabular-nums">{amount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
+                <tr key={idx} className="border-b border-black last:border-b-0">
+                  <td className="py-1 px-1.5 border-r border-black text-center font-bold text-[11px]">{item.quantity}</td>
+                  <td className="py-1 px-1.5 border-r border-black text-left font-bold text-[11px] whitespace-normal leading-tight">{name}</td>
+                  <td className="py-1 px-1.5 border-r border-black text-right font-bold text-[11px] tabular-nums">{item.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
+                  <td className="py-1 px-1.5 text-right font-bold text-[11px] tabular-nums">{amount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
 
-        {/* Total */}
         <div className="border-y border-slate-400 py-2 mb-2">
           <div className="flex justify-between items-center">
             <span className="font-bold text-sm">Total</span>
@@ -171,7 +169,14 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
       </div>
 
       <style jsx global>{`
+        @page {
+          margin: 0;
+        }
         @media print {
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
           body * {
             visibility: hidden;
           }
@@ -182,13 +187,14 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%;
+            width: 70mm;
+            max-width: 100%;
             margin: 0;
-            padding: 20px;
+            padding: 2mm;
             background: white;
             border: none;
             box-shadow: none;
-            font-size: 12px;
+            font-size: 11px;
           }
           #printable-receipt table {
             width: 100%;

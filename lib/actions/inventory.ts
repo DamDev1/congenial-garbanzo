@@ -9,6 +9,26 @@ import Brand from '../models/Brand';
 export async function getManagerInventory(branchId: string) {
   await connectDB();
   
+  // Fetch all products
+  const allProducts = await Product.find({}).lean();
+  
+  // Fetch existing inventory for this branch
+  const existingInventory = await Inventory.find({ branchId }).lean();
+  const existingProductIds = new Set(existingInventory.map(inv => inv.productId.toString()));
+
+  // Find products that don't have inventory for this branch
+  const missingProducts = allProducts.filter(p => !existingProductIds.has(p._id.toString()));
+
+  // Create missing inventory records
+  if (missingProducts.length > 0) {
+    const newInventoryDocs = missingProducts.map(p => ({
+      branchId,
+      productId: p._id,
+      quantity: 0
+    }));
+    await Inventory.insertMany(newInventoryDocs);
+  }
+
   // We need to fetch all inventory items for this branch, and populate the product and brand details
   const inventoryItems = await Inventory.find({ branchId })
     .populate({

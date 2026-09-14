@@ -14,6 +14,26 @@ import '../models/User';
 export async function getPOSInventory(branchId: string) {
   await connectDB();
 
+  // Fetch all products
+  const allProducts = await Product.find({}).lean();
+  
+  // Fetch existing inventory for this branch
+  const existingInventory = await Inventory.find({ branchId }).lean();
+  const existingProductIds = new Set(existingInventory.map(inv => inv.productId.toString()));
+
+  // Find products that don't have inventory for this branch
+  const missingProducts = allProducts.filter(p => !existingProductIds.has(p._id.toString()));
+
+  // Create missing inventory records
+  if (missingProducts.length > 0) {
+    const newInventoryDocs = missingProducts.map(p => ({
+      branchId,
+      productId: p._id,
+      quantity: 0
+    }));
+    await Inventory.insertMany(newInventoryDocs);
+  }
+
   // We need all inventory items for this branch, populated with Product and Brand
   // We only want to return items where the product exists.
   const inventory = await Inventory.find({ branchId })
