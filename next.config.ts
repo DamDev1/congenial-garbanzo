@@ -4,7 +4,7 @@ import withSerwistInit from "@serwist/next";
 const withSerwist = withSerwistInit({
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
-  disable: false, // Temporarily enabled for local PWA testing
+  disable: process.env.NODE_ENV === "development",
 });
 
 const nextConfig: NextConfig = {
