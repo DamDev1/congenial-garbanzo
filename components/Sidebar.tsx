@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebarStore } from '@/lib/store/useSidebarStore';
-import { Home, Users, Store, Package, ArrowRightLeft, LogOut, UserSquare, Receipt, X } from 'lucide-react';
+import { Home, Users, Store, Package, ArrowRightLeft, LogOut, UserSquare, Receipt, X, Banknote } from 'lucide-react';
 
 const ownerNavItems = [
   { href: '/owner', label: 'Dashboard', icon: Home },
@@ -13,6 +13,7 @@ const ownerNavItems = [
   { href: '/owner/products', label: 'Products', icon: Package },
   { href: '/owner/sales', label: 'Sales History', icon: Receipt },
   { href: '/owner/customers', label: 'Customers', icon: UserSquare },
+  { href: '/owner/expenses', label: 'Expenses', icon: Banknote },
   // { href: '/owner/transfers', label: 'Transfers', icon: ArrowRightLeft },
 ];
 
@@ -23,6 +24,7 @@ const managerNavItems = [
   // { href: '/manager/transfers', label: 'Transfers', icon: ArrowRightLeft },
   { href: '/manager/users', label: 'Staff', icon: Users },
   { href: '/manager/customers', label: 'Customers', icon: UserSquare },
+  { href: '/manager/expenses', label: 'Expenses', icon: Banknote },
 ];
 
 const cashierNavItems = [
@@ -30,6 +32,7 @@ const cashierNavItems = [
   { href: '/cashier/checkout', label: 'Checkout', icon: Store },
   { href: '/cashier/sales', label: 'Sales History', icon: Package },
   { href: '/cashier/customers', label: 'Customers', icon: UserSquare },
+  { href: '/cashier/expenses', label: 'Expenses', icon: Banknote },
 ];
 
 export function Sidebar({ userRole }: { userRole: string }) {

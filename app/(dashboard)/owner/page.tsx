@@ -20,64 +20,63 @@ export default async function OwnerDashboardPage() {
         <p className="text-slate-500 font-medium z-10">Here is what's happening across your branches today.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {/* Stat Card 1 - Today's Sales */}
-        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group md:col-span-2 lg:col-span-1">
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-2">
           <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
-              <TrendingUp className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+              <TrendingUp className="w-5 h-5" />
             </div>
             <h3 className="font-semibold text-slate-600">Today&apos;s Sales</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-extrabold text-slate-800">₦{stats.todaySalesTotal.toLocaleString()}</div>
-            <span className="text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">{stats.todaySalesCount} sale{stats.todaySalesCount !== 1 ? 's' : ''}</span>
+            <div className="text-3xl font-extrabold text-slate-800">₦{stats.todaySalesTotal.toLocaleString()}</div>
+            <span className="text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">{stats.todaySalesCount} sales</span>
           </div>
         </div>
 
-        {/* Stat Card 2 - Branches */}
-        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+        {/* Cash */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-              <Store className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-slate-600">Total Branches</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Cash (Today)</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-extrabold text-slate-800">{stats.branchCount}</div>
-            <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md">Active</span>
+            <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayCashTotal.toLocaleString()}</div>
           </div>
         </div>
 
-        {/* Stat Card 3 - Products */}
-        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+        {/* Transfer */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
-              <Package className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-slate-600">Products</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Transfer (Today)</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-extrabold text-slate-800">{stats.productCount}</div>
-            <span className="text-sm font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-md">Catalog</span>
+            <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayTransferTotal.toLocaleString()}</div>
           </div>
         </div>
 
-        {/* Stat Card 4 - Total Debt */}
-        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+        {/* Today's Debt */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-orange-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
-              <Users className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-slate-600">Total Debt</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Debt (Today)</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-extrabold text-slate-800">₦{stats.totalDebt.toLocaleString()}</div>
-            <span className="text-sm font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-md">Owed</span>
+            <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayDebtTotal.toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Today's Expenses */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-red-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-slate-600 text-sm">Expenses (Today)</h3>
+          </div>
+          <div className="flex items-end justify-between mt-2">
+            <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayExpensesTotal.toLocaleString()}</div>
           </div>
         </div>
       </div>

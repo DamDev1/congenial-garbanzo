@@ -63,7 +63,8 @@ export default async function ManagerDashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {/* Today's Revenue */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
@@ -75,7 +76,50 @@ export default async function ManagerDashboardPage() {
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.totalRevenue.toLocaleString()}</h3>
             </div>
           </div>
-          <p className="text-sm font-medium text-slate-500 relative z-10 truncate">{salesStats.salesCount} sales completed today</p>
+        </div>
+
+        {/* Cash */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Cash</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodCashTotal?.toLocaleString() || '0'}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Transfer */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Transfer </p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodTransferTotal?.toLocaleString() || '0'}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Debt */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Debt </p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodDebtTotal?.toLocaleString() || '0'}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Expenses */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Expenses </p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodExpensesTotal?.toLocaleString() || '0'}</h3>
+            </div>
+          </div>
         </div>
 
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
@@ -91,21 +135,6 @@ export default async function ManagerDashboardPage() {
           </div>
           <p className="text-sm font-medium text-slate-500 relative z-10 truncate">{totalProducts} unique products ({lowStockCount} low stock)</p>
         </div>
-
-        {/* Pending Transfers Card (Temporarily commented out) */}
-        {/* <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-colors" />
-          <div className="flex items-center gap-4 mb-4 relative z-10">
-            <div className="w-12 h-12 shrink-0 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center">
-              <ArrowRightLeft className="w-6 h-6" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Pending Transfers</p>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">{pendingTransfers}</h3>
-            </div>
-          </div>
-          <p className="text-sm font-medium text-slate-500 relative z-10 truncate">Awaiting action</p>
-        </div> */}
 
         {/* Staff Card */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">

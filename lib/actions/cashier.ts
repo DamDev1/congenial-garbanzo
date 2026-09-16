@@ -4,6 +4,7 @@ import connectDB from '../db/mongoose';
 import Transaction from '../models/Transaction';
 import '../models/Branch';
 import '../models/User';
+import Expense from '../models/Expense';
 import mongoose from 'mongoose';
 
 export async function getCashierStats(cashierId: string) {
@@ -28,23 +29,51 @@ export async function getCashierStats(cashierId: string) {
         _id: null,
         totalRevenue: { $sum: '$totalAmount' },
         salesCount: { $sum: 1 },
-        totalItemsSold: { $sum: { $sum: '$items.quantity' } }
+        totalItemsSold: { $sum: { $sum: '$items.quantity' } },
+        cashTotal: { $sum: '$cashAmount' },
+        transferTotal: { $sum: '$transferAmount' },
+        creditTotal: { $sum: '$creditAmount' }
       }
     }
   ]);
+
+  const expensesAgg = await Expense.aggregate([
+    {
+      $match: {
+        recordedBy: new mongoose.Types.ObjectId(cashierId),
+        date: { $gte: startOfDay, $lte: endOfDay }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$amount' }
+      }
+    }
+  ]);
+
+  const expensesTotal = expensesAgg.length > 0 ? expensesAgg[0].total : 0;
 
   if (stats.length === 0) {
     return {
       totalRevenue: 0,
       salesCount: 0,
-      totalItemsSold: 0
+      totalItemsSold: 0,
+      cashTotal: 0,
+      transferTotal: 0,
+      creditTotal: 0,
+      expensesTotal
     };
   }
 
   return {
     totalRevenue: stats[0].totalRevenue,
     salesCount: stats[0].salesCount,
-    totalItemsSold: stats[0].totalItemsSold
+    totalItemsSold: stats[0].totalItemsSold,
+    cashTotal: stats[0].cashTotal,
+    transferTotal: stats[0].transferTotal,
+    creditTotal: stats[0].creditTotal,
+    expensesTotal
   };
 }
 

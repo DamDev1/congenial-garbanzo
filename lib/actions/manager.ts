@@ -4,6 +4,7 @@ import connectDB from '../db/mongoose';
 import Transaction from '../models/Transaction';
 import '../models/Branch';
 import '../models/User';
+import Expense from '../models/Expense';
 import mongoose from 'mongoose';
 
 export async function getManagerStats(branchId: string) {
@@ -28,23 +29,51 @@ export async function getManagerStats(branchId: string) {
         _id: null,
         totalRevenue: { $sum: '$totalAmount' },
         salesCount: { $sum: 1 },
-        totalItemsSold: { $sum: { $sum: '$items.quantity' } }
+        totalItemsSold: { $sum: { $sum: '$items.quantity' } },
+        periodCashTotal: { $sum: '$cashAmount' },
+        periodTransferTotal: { $sum: '$transferAmount' },
+        periodDebtTotal: { $sum: '$creditAmount' }
       }
     }
   ]);
+
+  const expensesAgg = await Expense.aggregate([
+    {
+      $match: {
+        branchId: new mongoose.Types.ObjectId(branchId),
+        date: { $gte: startOfDay, $lte: endOfDay },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$amount' },
+      },
+    },
+  ]);
+  
+  const periodExpensesTotal = expensesAgg[0]?.total ?? 0;
 
   if (stats.length === 0) {
     return {
       totalRevenue: 0,
       salesCount: 0,
-      totalItemsSold: 0
+      totalItemsSold: 0,
+      periodCashTotal: 0,
+      periodTransferTotal: 0,
+      periodDebtTotal: 0,
+      periodExpensesTotal
     };
   }
 
   return {
-    totalRevenue: stats[0].totalRevenue,
-    salesCount: stats[0].salesCount,
-    totalItemsSold: stats[0].totalItemsSold
+    totalRevenue: stats[0].totalRevenue || 0,
+    salesCount: stats[0].salesCount || 0,
+    totalItemsSold: stats[0].totalItemsSold || 0,
+    periodCashTotal: stats[0].periodCashTotal || 0,
+    periodTransferTotal: stats[0].periodTransferTotal || 0,
+    periodDebtTotal: stats[0].periodDebtTotal || 0,
+    periodExpensesTotal
   };
 }
 

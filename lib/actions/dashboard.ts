@@ -8,6 +8,7 @@ import User from '@/lib/models/User';
 import Product from '@/lib/models/Product';
 import Transaction from '@/lib/models/Transaction';
 import Inventory from '@/lib/models/Inventory';
+import Expense from '@/lib/models/Expense';
 
 export async function getOwnerDashboardStats() {
   const session = await getServerSession(authOptions);
@@ -38,12 +39,33 @@ export async function getOwnerDashboardStats() {
         _id: null,
         total: { $sum: '$totalAmount' },
         count: { $sum: 1 },
+        cashTotal: { $sum: '$cashAmount' },
+        transferTotal: { $sum: '$transferAmount' },
+        creditTotal: { $sum: '$creditAmount' },
       },
     },
   ]);
 
   const todaySalesTotal = todaySalesAgg[0]?.total ?? 0;
   const todaySalesCount = todaySalesAgg[0]?.count ?? 0;
+  const todayCashTotal = todaySalesAgg[0]?.cashTotal ?? 0;
+  const todayTransferTotal = todaySalesAgg[0]?.transferTotal ?? 0;
+  const todayDebtTotal = todaySalesAgg[0]?.creditTotal ?? 0;
+
+  const expensesAgg = await Expense.aggregate([
+    {
+      $match: {
+        date: { $gte: todayStart },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$amount' },
+      },
+    },
+  ]);
+  const todayExpensesTotal = expensesAgg[0]?.total ?? 0;
 
   // Total outstanding debt (credit transactions)
   const totalDebtAgg = await Transaction.aggregate([
@@ -68,7 +90,11 @@ export async function getOwnerDashboardStats() {
     productCount,
     todaySalesTotal,
     todaySalesCount,
-    totalDebt,
+    todayCashTotal,
+    todayTransferTotal,
+    todayDebtTotal,
+    todayExpensesTotal,
+    totalDebt, // All-time total debt
   };
 }
 
@@ -113,14 +139,15 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     .lean();
 
   const totalRevenue = transactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+  const periodCashTotal = transactions.reduce((sum, t) => sum + (t.cashAmount || 0), 0);
+  const periodTransferTotal = transactions.reduce((sum, t) => sum + (t.transferAmount || 0), 0);
+  const periodDebtTotal = transactions.reduce((sum, t) => sum + (t.creditAmount || 0), 0);
   
-  // Calculate outstanding debt from credit transactions
+  // Calculate outstanding debt from credit transactions (all time for branch)
   const debtQuery = {
     branchId,
     paymentMethod: 'credit' as const,
     status: 'completed' as const
-    // Depending on schema, we might need to check if it's paid off, 
-    // but for now, total credit amount issued is the debt.
   };
   const creditTransactions = await Transaction.find(debtQuery).lean();
   const totalDebt = creditTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
@@ -131,6 +158,10 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     return sum + ((inv.quantity || 0) * (inv.productId?.costPrice || 0));
   }, 0);
 
+  // Expenses for the period
+  const expenses = await Expense.find({ branchId, date: { $gte: startDate } }).lean();
+  const periodExpensesTotal = expenses.reduce((sum, e: any) => sum + (e.amount || 0), 0);
+
   // Also get assigned manager
   const manager = await User.findOne({ branchId, role: 'manager' }).lean();
 
@@ -138,6 +169,10 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     branch,
     manager,
     totalRevenue,
+    periodCashTotal,
+    periodTransferTotal,
+    periodDebtTotal,
+    periodExpensesTotal,
     totalDebt,
     totalStockValue,
     transactions,

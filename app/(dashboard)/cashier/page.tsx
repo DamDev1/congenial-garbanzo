@@ -24,8 +24,8 @@ export default async function CashierDashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-2">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-blue-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
             <Wallet className="w-6 h-6" />
@@ -34,19 +34,47 @@ export default async function CashierDashboardPage() {
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.totalRevenue.toLocaleString()}</h3>
         </div>
 
-        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden">
+        {/* Cash */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-green-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Cash (Today)</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.cashTotal.toLocaleString()}</h3>
+        </div>
+
+        {/* Transfer */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-indigo-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Transfer (Today)</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.transferTotal.toLocaleString()}</h3>
+        </div>
+
+        {/* Debt */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-orange-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Debt (Today)</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.creditTotal.toLocaleString()}</h3>
+        </div>
+
+        {/* Expenses */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-red-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Expenses (Today)</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.expensesTotal.toLocaleString()}</h3>
+        </div>
+
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-emerald-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
-          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
-            <ShoppingBag className="w-6 h-6" />
+          <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
+            <ShoppingBag className="w-5 h-5" />
           </div>
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Today's Sales</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">{stats.salesCount}</h3>
         </div>
 
-        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden">
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-purple-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
-          <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
-            <Package className="w-6 h-6" />
+          <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
+            <Package className="w-5 h-5" />
           </div>
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Items Sold Today</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">{stats.totalItemsSold}</h3>
