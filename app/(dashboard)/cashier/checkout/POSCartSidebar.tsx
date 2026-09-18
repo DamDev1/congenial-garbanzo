@@ -9,6 +9,7 @@ interface POSCartSidebarProps {
   isProcessing: boolean;
   onCheckoutOpen: () => void;
   updateQuantity: (id: string, delta: number) => void;
+  updatePrice: (id: string, price: number) => void;
   removeFromCart: (id: string) => void;
 }
 
@@ -19,6 +20,7 @@ export function POSCartSidebar({
   isProcessing,
   onCheckoutOpen,
   updateQuantity,
+  updatePrice,
   removeFromCart
 }: POSCartSidebarProps) {
   return (
@@ -50,7 +52,27 @@ export function POSCartSidebar({
               <div key={item.productId} className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-slate-800 truncate">{item.name}</div>
-                  <div className="font-semibold text-blue-600 mt-0.5">₦{item.price.toLocaleString()}</div>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <span className="font-semibold text-blue-600">₦</span>
+                    <input 
+                      type="number"
+                      min="0"
+                      max={item.originalPrice}
+                      value={item.price || ''}
+                      onChange={(e) => {
+                        const valStr = e.target.value;
+                        const val = parseFloat(valStr);
+                        updatePrice(item.productId, isNaN(val) ? 0 : val);
+                      }}
+                      onBlur={(e) => {
+                        const val = parseFloat(e.target.value);
+                        if (isNaN(val) || val === 0) {
+                          updatePrice(item.productId, item.originalPrice);
+                        }
+                      }}
+                      className="w-20 bg-transparent border-b border-transparent hover:border-slate-200 focus:border-blue-600 focus:outline-none font-semibold text-blue-600 p-0 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
                 </div>
                 
                 <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-100">

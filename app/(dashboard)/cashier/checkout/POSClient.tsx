@@ -18,6 +18,7 @@ export interface CartItem {
   productId: string;
   name: string;
   price: number;
+  originalPrice: number;
   quantity: number;
   maxStock: number;
   image?: string;
@@ -78,6 +79,7 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
         productId: item._id,
         name: item.name,
         price: item.sellingPrice,
+        originalPrice: item.sellingPrice,
         quantity: 1,
         maxStock: item.stockQuantity,
         image: item.image
@@ -93,6 +95,22 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
           if (newQty <= 0) return item; // Handled by remove
           if (newQty > item.maxStock) return item; // Cannot exceed stock
           return { ...item, quantity: newQty };
+        }
+        return item;
+      });
+    });
+  };
+
+  const updatePrice = (productId: string, newPrice: number) => {
+    setCart(prev => {
+      return prev.map(item => {
+        if (item.productId === productId) {
+          let validPrice = newPrice;
+          if (validPrice > item.originalPrice) {
+            validPrice = item.originalPrice;
+          }
+          if (validPrice < 0) validPrice = 0;
+          return { ...item, price: validPrice };
         }
         return item;
       });
@@ -156,6 +174,7 @@ export default function POSClient({ inventory, customers, branchId, cashierId }:
         isProcessing={isProcessing}
         onCheckoutOpen={() => setIsCheckoutOpen(true)}
         updateQuantity={updateQuantity}
+        updatePrice={updatePrice}
         removeFromCart={removeFromCart}
       />
 
