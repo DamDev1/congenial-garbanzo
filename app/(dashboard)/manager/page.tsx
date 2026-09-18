@@ -68,9 +68,9 @@ export default async function ManagerDashboardPage() {
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
-            <div className="w-12 h-12 shrink-0 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+            {/* <div className="w-12 h-12 shrink-0 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
               <Banknote className="w-6 h-6" />
-            </div>
+            </div> */}
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Today's Revenue</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.totalRevenue.toLocaleString()}</h3>
@@ -125,9 +125,9 @@ export default async function ManagerDashboardPage() {
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
-            <div className="w-12 h-12 shrink-0 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+            {/* <div className="w-12 h-12 shrink-0 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
               <TrendingUp className="w-6 h-6" />
-            </div>
+            </div> */}
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Stock</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">{totalStock.toLocaleString()} items</h3>
@@ -140,9 +140,9 @@ export default async function ManagerDashboardPage() {
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
-            <div className="w-12 h-12 shrink-0 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+            {/* <div className="w-12 h-12 shrink-0 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
               <Users className="w-6 h-6" />
-            </div>
+            </div> */}
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Active Staff</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">{staffCount}</h3>
@@ -155,9 +155,9 @@ export default async function ManagerDashboardPage() {
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
-            <div className="w-12 h-12 shrink-0 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center">
+            {/* <div className="w-12 h-12 shrink-0 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center">
               <Store className="w-6 h-6" />
-            </div>
+            </div> */}
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Branch</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate" title={branch?.name}>
