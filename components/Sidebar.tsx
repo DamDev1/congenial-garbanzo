@@ -25,6 +25,7 @@ const managerNavItems = [
   { href: '/manager/users', label: 'Staff', icon: Users },
   { href: '/manager/customers', label: 'Customers', icon: UserSquare },
   { href: '/manager/expenses', label: 'Expenses', icon: Banknote },
+  { href: '/manager/pos-agent', label: 'POS Agents', icon: ArrowRightLeft },
 ];
 
 const cashierNavItems = [
@@ -33,6 +34,7 @@ const cashierNavItems = [
   { href: '/cashier/sales', label: 'Sales History', icon: Package },
   { href: '/cashier/customers', label: 'Customers', icon: UserSquare },
   { href: '/cashier/expenses', label: 'Expenses', icon: Banknote },
+  { href: '/cashier/pos-agent', label: 'POS Agents', icon: ArrowRightLeft },
 ];
 
 export function Sidebar({ userRole }: { userRole: string }) {

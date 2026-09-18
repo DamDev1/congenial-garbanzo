@@ -5,6 +5,7 @@ import Transaction from '../models/Transaction';
 import '../models/Branch';
 import '../models/User';
 import Expense from '../models/Expense';
+import PosExchange from '../models/PosExchange';
 import mongoose from 'mongoose';
 
 export async function getCashierStats(cashierId: string) {
@@ -54,13 +55,32 @@ export async function getCashierStats(cashierId: string) {
 
   const expensesTotal = expensesAgg.length > 0 ? expensesAgg[0].total : 0;
 
+  const posExchangeAgg = await PosExchange.aggregate([
+    {
+      $match: {
+        recordedBy: new mongoose.Types.ObjectId(cashierId),
+        date: { $gte: startOfDay, $lte: endOfDay }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalCashGiven: { $sum: '$cashGiven' },
+        totalTransferReceived: { $sum: '$transferReceived' }
+      }
+    }
+  ]);
+
+  const posCashGiven = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalCashGiven : 0;
+  const posTransferReceived = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalTransferReceived : 0;
+
   if (stats.length === 0) {
     return {
       totalRevenue: 0,
       salesCount: 0,
       totalItemsSold: 0,
-      cashTotal: 0,
-      transferTotal: 0,
+      cashTotal: 0 - posCashGiven,
+      transferTotal: 0 + posTransferReceived,
       creditTotal: 0,
       expensesTotal
     };
@@ -70,8 +90,8 @@ export async function getCashierStats(cashierId: string) {
     totalRevenue: stats[0].totalRevenue,
     salesCount: stats[0].salesCount,
     totalItemsSold: stats[0].totalItemsSold,
-    cashTotal: stats[0].cashTotal,
-    transferTotal: stats[0].transferTotal,
+    cashTotal: stats[0].cashTotal - posCashGiven,
+    transferTotal: stats[0].transferTotal + posTransferReceived,
     creditTotal: stats[0].creditTotal,
     expensesTotal
   };
