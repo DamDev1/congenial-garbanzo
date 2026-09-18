@@ -24,7 +24,7 @@ export default async function CashierDashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-2">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-blue-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
           {/* <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 relative z-10">
