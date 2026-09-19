@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="min-h-full flex flex-col">
+        <NextTopLoader color="#2563eb" showSpinner={false} />
         <Providers>
           <ServiceWorkerRegister />
           {children}
