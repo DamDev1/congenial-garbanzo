@@ -47,13 +47,21 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
     },
     {
       $group: {
-        _id: null,
+        _id: '$method',
         total: { $sum: '$amount' }
       }
     }
   ]);
 
-  const expensesTotal = expensesAgg.length > 0 ? expensesAgg[0].total : 0;
+  let expensesTotal = 0;
+  let cashExpenses = 0;
+  let transferExpenses = 0;
+  
+  expensesAgg.forEach((exp) => {
+    expensesTotal += exp.total;
+    if (exp._id === 'cash') cashExpenses += exp.total;
+    if (exp._id === 'transfer') transferExpenses += exp.total;
+  });
 
   const posExchangeAgg = await PosExchange.aggregate([
     {
@@ -79,8 +87,8 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
       totalRevenue: 0,
       salesCount: 0,
       totalItemsSold: 0,
-      cashTotal: 0 - posCashGiven,
-      transferTotal: 0 + posTransferReceived,
+      cashTotal: 0 - posCashGiven - cashExpenses,
+      transferTotal: 0 + posTransferReceived - transferExpenses,
       creditTotal: 0,
       expensesTotal
     };
@@ -90,8 +98,8 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
     totalRevenue: stats[0].totalRevenue,
     salesCount: stats[0].salesCount,
     totalItemsSold: stats[0].totalItemsSold,
-    cashTotal: stats[0].cashTotal - posCashGiven,
-    transferTotal: stats[0].transferTotal + posTransferReceived,
+    cashTotal: stats[0].cashTotal - posCashGiven - cashExpenses,
+    transferTotal: stats[0].transferTotal + posTransferReceived - transferExpenses,
     creditTotal: stats[0].creditTotal,
     expensesTotal
   };

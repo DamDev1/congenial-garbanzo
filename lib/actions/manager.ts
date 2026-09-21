@@ -46,13 +46,21 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
     },
     {
       $group: {
-        _id: null,
+        _id: '$method',
         total: { $sum: '$amount' },
       },
     },
   ]);
   
-  const periodExpensesTotal = expensesAgg[0]?.total ?? 0;
+  let periodExpensesTotal = 0;
+  let cashExpenses = 0;
+  let transferExpenses = 0;
+  
+  expensesAgg.forEach((exp) => {
+    periodExpensesTotal += exp.total;
+    if (exp._id === 'cash') cashExpenses += exp.total;
+    if (exp._id === 'transfer') transferExpenses += exp.total;
+  });
 
   if (stats.length === 0) {
     return {
@@ -70,8 +78,8 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
     totalRevenue: stats[0].totalRevenue || 0,
     salesCount: stats[0].salesCount || 0,
     totalItemsSold: stats[0].totalItemsSold || 0,
-    periodCashTotal: stats[0].periodCashTotal || 0,
-    periodTransferTotal: stats[0].periodTransferTotal || 0,
+    periodCashTotal: (stats[0].periodCashTotal || 0) - cashExpenses,
+    periodTransferTotal: (stats[0].periodTransferTotal || 0) - transferExpenses,
     periodDebtTotal: stats[0].periodDebtTotal || 0,
     periodExpensesTotal
   };

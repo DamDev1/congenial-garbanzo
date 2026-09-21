@@ -51,8 +51,8 @@ export async function getOwnerDashboardStats(dateStr?: string) {
 
   const todaySalesTotal = todaySalesAgg[0]?.total ?? 0;
   const todaySalesCount = todaySalesAgg[0]?.count ?? 0;
-  const todayCashTotal = todaySalesAgg[0]?.cashTotal ?? 0;
-  const todayTransferTotal = todaySalesAgg[0]?.transferTotal ?? 0;
+  let todayCashTotal = todaySalesAgg[0]?.cashTotal ?? 0;
+  let todayTransferTotal = todaySalesAgg[0]?.transferTotal ?? 0;
   const todayDebtTotal = todaySalesAgg[0]?.creditTotal ?? 0;
 
   const expensesAgg = await Expense.aggregate([
@@ -63,12 +63,18 @@ export async function getOwnerDashboardStats(dateStr?: string) {
     },
     {
       $group: {
-        _id: null,
+        _id: '$method',
         total: { $sum: '$amount' },
       },
     },
   ]);
-  const todayExpensesTotal = expensesAgg[0]?.total ?? 0;
+  
+  let todayExpensesTotal = 0;
+  expensesAgg.forEach((exp) => {
+    todayExpensesTotal += exp.total;
+    if (exp._id === 'cash') todayCashTotal -= exp.total;
+    if (exp._id === 'transfer') todayTransferTotal -= exp.total;
+  });
 
   // Total outstanding debt (credit transactions)
   const totalDebtAgg = await Transaction.aggregate([
@@ -142,8 +148,8 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     .lean();
 
   const totalRevenue = transactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-  const periodCashTotal = transactions.reduce((sum, t) => sum + (t.cashAmount || 0), 0);
-  const periodTransferTotal = transactions.reduce((sum, t) => sum + (t.transferAmount || 0), 0);
+  let periodCashTotal = transactions.reduce((sum, t) => sum + (t.cashAmount || 0), 0);
+  let periodTransferTotal = transactions.reduce((sum, t) => sum + (t.transferAmount || 0), 0);
   const periodDebtTotal = transactions.reduce((sum, t) => sum + (t.creditAmount || 0), 0);
   
   // Calculate outstanding debt from credit transactions (all time for branch)
@@ -163,7 +169,11 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
 
   // Expenses for the period
   const expenses = await Expense.find({ branchId, date: { $gte: startDate } }).lean();
-  const periodExpensesTotal = expenses.reduce((sum, e: any) => sum + (e.amount || 0), 0);
+  const periodExpensesTotal = expenses.reduce((sum, e: any) => {
+    if (e.method === 'cash') periodCashTotal -= (e.amount || 0);
+    if (e.method === 'transfer') periodTransferTotal -= (e.amount || 0);
+    return sum + (e.amount || 0);
+  }, 0);
 
   // Also get assigned manager
   const manager = await User.findOne({ branchId, role: 'manager' }).lean();
