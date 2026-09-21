@@ -7,8 +7,13 @@ import Branch from '@/lib/models/Branch';
 import Inventory from '@/lib/models/Inventory';
 import Transfer from '@/lib/models/Transfer';
 import connectDB from '@/lib/db/mongoose';
+import DashboardDateFilter from '@/components/DashboardDateFilter';
 
-export default async function ManagerDashboardPage() {
+export default async function ManagerDashboardPage(
+  props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+) {
+  const searchParams = await props.searchParams;
+  const dateStr = typeof searchParams.date === 'string' ? searchParams.date : undefined;
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== 'manager') {
@@ -50,17 +55,20 @@ export default async function ManagerDashboardPage() {
 
   // 4. Get today's sales stats
   const { getManagerStats } = await import('@/lib/actions/manager');
-  const salesStats = await getManagerStats(branchId.toString());
+  const salesStats = await getManagerStats(branchId.toString(), dateStr);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-          Welcome back, {session.user.name}
-        </h1>
-        <p className="text-slate-500 font-medium mt-1">
-          Here's what's happening at <span className="font-bold text-slate-700">{branch?.name || 'your branch'}</span> today.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            Welcome back, {session.user.name}
+          </h1>
+          <p className="text-slate-500 font-medium mt-1">
+            Here's what's happening at <span className="font-bold text-slate-700">{branch?.name || 'your branch'}</span> {dateStr ? 'on this date' : 'today'}.
+          </p>
+        </div>
+        <DashboardDateFilter />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -72,7 +80,7 @@ export default async function ManagerDashboardPage() {
               <Banknote className="w-6 h-6" />
             </div> */}
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Today's Revenue</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Revenue</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.totalRevenue.toLocaleString()}</h3>
             </div>
           </div>

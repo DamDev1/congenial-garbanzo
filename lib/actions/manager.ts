@@ -7,13 +7,13 @@ import '../models/User';
 import Expense from '../models/Expense';
 import mongoose from 'mongoose';
 
-export async function getManagerStats(branchId: string) {
+export async function getManagerStats(branchId: string, dateStr?: string) {
   await connectDB();
   
-  const startOfDay = new Date();
+  const startOfDay = dateStr ? new Date(dateStr) : new Date();
   startOfDay.setHours(0, 0, 0, 0);
   
-  const endOfDay = new Date();
+  const endOfDay = dateStr ? new Date(dateStr) : new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
   const stats = await Transaction.aggregate([

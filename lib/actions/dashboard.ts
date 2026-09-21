@@ -10,7 +10,7 @@ import Transaction from '@/lib/models/Transaction';
 import Inventory from '@/lib/models/Inventory';
 import Expense from '@/lib/models/Expense';
 
-export async function getOwnerDashboardStats() {
+export async function getOwnerDashboardStats(dateStr?: string) {
   const session = await getServerSession(authOptions);
 
   if (session?.user?.role !== 'owner') {
@@ -23,15 +23,18 @@ export async function getOwnerDashboardStats() {
   const userCount = await User.countDocuments();
   const productCount = await Product.countDocuments();
 
-  // Today's total sales
-  const todayStart = new Date();
+  // Specific day's total sales
+  const todayStart = dateStr ? new Date(dateStr) : new Date();
   todayStart.setHours(0, 0, 0, 0);
+
+  const todayEnd = dateStr ? new Date(dateStr) : new Date();
+  todayEnd.setHours(23, 59, 59, 999);
 
   const todaySalesAgg = await Transaction.aggregate([
     {
       $match: {
         status: 'completed',
-        createdAt: { $gte: todayStart },
+        createdAt: { $gte: todayStart, $lte: todayEnd },
       },
     },
     {
@@ -55,7 +58,7 @@ export async function getOwnerDashboardStats() {
   const expensesAgg = await Expense.aggregate([
     {
       $match: {
-        date: { $gte: todayStart },
+        date: { $gte: todayStart, $lte: todayEnd },
       },
     },
     {

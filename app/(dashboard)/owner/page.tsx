@@ -3,21 +3,29 @@ import { authOptions } from '@/lib/auth';
 import { getOwnerDashboardStats, getRecentTransactions } from '@/lib/actions/dashboard';
 import { Store, Users, Package, TrendingUp, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import DashboardDateFilter from '@/components/DashboardDateFilter';
 
-export default async function OwnerDashboardPage() {
+export default async function OwnerDashboardPage(
+  props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+) {
+  const searchParams = await props.searchParams;
+  const dateStr = typeof searchParams.date === 'string' ? searchParams.date : undefined;
   const session = await getServerSession(authOptions);
-  const stats = await getOwnerDashboardStats();
+  const stats = await getOwnerDashboardStats(dateStr);
   const recentTransactions = await getRecentTransactions();
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col gap-2 relative">
-        {/* Subtle background glow */}
-        <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
-        <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 z-10">
-          Welcome back, <span className="text-gradient">{session?.user?.name?.split(' ')[0]}</span>
-        </h2>
-        <p className="text-slate-500 font-medium z-10">Here is what's happening across your branches today.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative">
+        <div className="flex flex-col gap-2 relative">
+          {/* Subtle background glow */}
+          <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
+          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 z-10">
+            Welcome back, <span className="text-gradient">{session?.user?.name?.split(' ')[0]}</span>
+          </h2>
+          <p className="text-slate-500 font-medium z-10">Here is what's happening across your branches {dateStr ? 'on this date' : 'today'}.</p>
+        </div>
+        <DashboardDateFilter />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -28,7 +36,7 @@ export default async function OwnerDashboardPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <h3 className="font-semibold text-slate-600">Today&apos;s Sales</h3>
+            <h3 className="font-semibold text-slate-600">Sales</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-3xl font-extrabold text-slate-800">₦{stats.todaySalesTotal.toLocaleString()}</div>
@@ -40,7 +48,7 @@ export default async function OwnerDashboardPage() {
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Cash (Today)</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Cash</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayCashTotal.toLocaleString()}</div>
@@ -51,7 +59,7 @@ export default async function OwnerDashboardPage() {
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Transfer (Today)</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Transfer</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayTransferTotal.toLocaleString()}</div>
@@ -62,7 +70,7 @@ export default async function OwnerDashboardPage() {
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-orange-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Debt (Today)</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Debt</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayDebtTotal.toLocaleString()}</div>
@@ -73,7 +81,7 @@ export default async function OwnerDashboardPage() {
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-red-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Expenses (Today)</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Expenses</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayExpensesTotal.toLocaleString()}</div>
