@@ -14,7 +14,7 @@ const ownerNavItems = [
   { href: '/owner/sales', label: 'Sales History', icon: Receipt },
   { href: '/owner/customers', label: 'Customers', icon: UserSquare },
   { href: '/owner/expenses', label: 'Expenses', icon: Banknote },
-  // { href: '/owner/transfers', label: 'Transfers', icon: ArrowRightLeft },
+  { href: '/owner/pos-agent', label: 'POS Agents', icon: ArrowRightLeft },
 ];
 
 const managerNavItems = [

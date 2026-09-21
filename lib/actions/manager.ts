@@ -5,6 +5,7 @@ import Transaction from '../models/Transaction';
 import '../models/Branch';
 import '../models/User';
 import Expense from '../models/Expense';
+import PosExchange from '../models/PosExchange';
 import mongoose from 'mongoose';
 
 export async function getManagerStats(branchId: string, dateStr?: string) {
@@ -62,13 +63,32 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
     if (exp._id === 'transfer') transferExpenses += exp.total;
   });
 
+  const posExchangeAgg = await PosExchange.aggregate([
+    {
+      $match: {
+        branchId: new mongoose.Types.ObjectId(branchId),
+        date: { $gte: startOfDay, $lte: endOfDay }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalCashGiven: { $sum: '$cashGiven' },
+        totalTransferReceived: { $sum: '$transferReceived' }
+      }
+    }
+  ]);
+
+  const posCashGiven = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalCashGiven : 0;
+  const posTransferReceived = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalTransferReceived : 0;
+
   if (stats.length === 0) {
     return {
       totalRevenue: 0,
       salesCount: 0,
       totalItemsSold: 0,
-      periodCashTotal: 0,
-      periodTransferTotal: 0,
+      periodCashTotal: 0 - cashExpenses - posCashGiven,
+      periodTransferTotal: 0 - transferExpenses + posTransferReceived,
       periodDebtTotal: 0,
       periodExpensesTotal
     };
@@ -78,8 +98,8 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
     totalRevenue: stats[0].totalRevenue || 0,
     salesCount: stats[0].salesCount || 0,
     totalItemsSold: stats[0].totalItemsSold || 0,
-    periodCashTotal: (stats[0].periodCashTotal || 0) - cashExpenses,
-    periodTransferTotal: (stats[0].periodTransferTotal || 0) - transferExpenses,
+    periodCashTotal: (stats[0].periodCashTotal || 0) - cashExpenses - posCashGiven,
+    periodTransferTotal: (stats[0].periodTransferTotal || 0) - transferExpenses + posTransferReceived,
     periodDebtTotal: stats[0].periodDebtTotal || 0,
     periodExpensesTotal
   };

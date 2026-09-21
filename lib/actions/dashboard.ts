@@ -9,6 +9,7 @@ import Product from '@/lib/models/Product';
 import Transaction from '@/lib/models/Transaction';
 import Inventory from '@/lib/models/Inventory';
 import Expense from '@/lib/models/Expense';
+import PosExchange from '@/lib/models/PosExchange';
 
 export async function getOwnerDashboardStats(dateStr?: string) {
   const session = await getServerSession(authOptions);
@@ -75,6 +76,27 @@ export async function getOwnerDashboardStats(dateStr?: string) {
     if (exp._id === 'cash') todayCashTotal -= exp.total;
     if (exp._id === 'transfer') todayTransferTotal -= exp.total;
   });
+
+  const posExchangeAgg = await PosExchange.aggregate([
+    {
+      $match: {
+        date: { $gte: todayStart, $lte: todayEnd },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalCashGiven: { $sum: '$cashGiven' },
+        totalTransferReceived: { $sum: '$transferReceived' },
+      },
+    },
+  ]);
+
+  const posCashGiven = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalCashGiven : 0;
+  const posTransferReceived = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalTransferReceived : 0;
+
+  todayCashTotal -= posCashGiven;
+  todayTransferTotal += posTransferReceived;
 
   // Total outstanding debt (credit transactions)
   const totalDebtAgg = await Transaction.aggregate([
@@ -174,6 +196,14 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     if (e.method === 'transfer') periodTransferTotal -= (e.amount || 0);
     return sum + (e.amount || 0);
   }, 0);
+
+  // POS Exchanges for the period
+  const posExchanges = await PosExchange.find({ branchId, date: { $gte: startDate } }).lean();
+  const posCashGiven = posExchanges.reduce((sum, p: any) => sum + (p.cashGiven || 0), 0);
+  const posTransferReceived = posExchanges.reduce((sum, p: any) => sum + (p.transferReceived || 0), 0);
+
+  periodCashTotal -= posCashGiven;
+  periodTransferTotal += posTransferReceived;
 
   // Also get assigned manager
   const manager = await User.findOne({ branchId, role: 'manager' }).lean();

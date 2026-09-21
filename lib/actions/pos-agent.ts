@@ -30,13 +30,16 @@ export async function createPosExchange(data: {
 
   revalidatePath('/cashier/pos-agent');
   revalidatePath('/manager/pos-agent');
+  revalidatePath('/owner/pos-agent');
   revalidatePath('/cashier');
   revalidatePath('/manager');
+  revalidatePath('/owner');
+  revalidatePath('/owner/branches/[id]', 'page');
 
   return JSON.parse(JSON.stringify(exchange));
 }
 
-export async function getPosExchanges(branchId: string, filter: 'today' | 'week' | 'month' | 'all' = 'today') {
+export async function getPosExchanges(branchId?: string, filter: 'today' | 'week' | 'month' | 'all' = 'today') {
   await connectDB();
 
   let dateQuery = {};
@@ -54,7 +57,11 @@ export async function getPosExchanges(branchId: string, filter: 'today' | 'week'
     dateQuery = { $gte: start };
   }
 
-  const query: any = { branchId };
+  const query: any = {};
+  if (branchId) {
+    query.branchId = branchId;
+  }
+  
   if (filter !== 'all') {
     query.date = dateQuery;
   }
