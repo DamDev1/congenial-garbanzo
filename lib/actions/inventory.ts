@@ -8,10 +8,11 @@ import Brand from '../models/Brand';
 
 export async function getManagerInventory(branchId: string) {
   await connectDB();
-  
+  Brand.init(); // Ensure Brand is registered
+
   // Fetch all products
   const allProducts = await Product.find({}).lean();
-  
+
   // Fetch existing inventory for this branch
   const existingInventory = await Inventory.find({ branchId }).lean();
   const existingProductIds = new Set(existingInventory.map(inv => inv.productId.toString()));
@@ -63,6 +64,31 @@ export async function addInventoryStock(inventoryId: string, quantityToAdd: numb
 
   revalidatePath('/manager/inventory');
   revalidatePath('/cashier/checkout');
+  revalidatePath(`/owner/branches/${inventory.branchId}`);
+  revalidatePath(`/owner/branches/${inventory.branchId}/inventory`);
+
+  return JSON.parse(JSON.stringify(inventory));
+}
+
+export async function addStockToBranch(productId: string, branchId: string, quantityToAdd: number) {
+  await connectDB();
+
+  if (quantityToAdd <= 0) {
+    throw new Error('Quantity must be greater than zero');
+  }
+
+  const inventory = await Inventory.findOne({ productId, branchId });
+  if (!inventory) {
+    throw new Error('Inventory record not found for this branch');
+  }
+
+  inventory.quantity += quantityToAdd;
+  await inventory.save();
+
+  revalidatePath('/owner/products');
+  revalidatePath('/manager/inventory');
+  revalidatePath('/cashier/checkout');
+  revalidatePath(`/owner/branches/${branchId}`);
 
   return JSON.parse(JSON.stringify(inventory));
 }

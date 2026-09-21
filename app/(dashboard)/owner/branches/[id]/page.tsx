@@ -55,8 +55,8 @@ export default async function BranchDrillDownPage({
               key={f.value}
               href={`/owner/branches/${id}?filter=${f.value}`}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${filter === f.value
-                  ? 'bg-blue-50 text-blue-700 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                ? 'bg-blue-50 text-blue-700 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                 }`}
             >
               {f.label}
@@ -142,6 +142,7 @@ export default async function BranchDrillDownPage({
         <div className="glass rounded-3xl shadow-sm border border-slate-100/50 flex flex-col">
           <div className="p-6 border-b border-slate-100 flex items-center justify-between">
             <h3 className="font-bold text-slate-800">Current Stock</h3>
+            <Link href={`/owner/branches/${id}/inventory`} className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
           </div>
           <div className="p-0 overflow-y-auto max-h-[400px]">
             <ul className="divide-y divide-slate-100">

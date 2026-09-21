@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Plus, Search, Receipt } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { CustomDatePicker } from '@/components/ui/CustomDatePicker';
 import { ExpenseFormModal } from './ExpenseFormModal';
 
 export default function ExpensesClient({ 
@@ -16,10 +17,22 @@ export default function ExpensesClient({
 }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState<Date | undefined>(new Date());
 
-  const filteredExpenses = initialExpenses.filter(e =>
-    e.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredExpenses = initialExpenses.filter(e => {
+    const matchesSearch = e.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    let matchesDate = true;
+    if (dateFilter) {
+      const expenseDate = new Date(e.date);
+      matchesDate = 
+        expenseDate.getFullYear() === dateFilter.getFullYear() &&
+        expenseDate.getMonth() === dateFilter.getMonth() &&
+        expenseDate.getDate() === dateFilter.getDate();
+    }
+    
+    return matchesSearch && matchesDate;
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -39,9 +52,9 @@ export default function ExpensesClient({
         </div>
       </div>
 
-      <div className="glass rounded-3xl overflow-hidden shadow-sm border border-slate-100/50 flex flex-col">
-        <div className="p-4 md:p-6 bg-white border-b border-slate-100 flex items-center justify-between">
-          <div className="relative w-full max-w-md">
+      <div className="glass rounded-3xl shadow-sm border border-slate-100/50 flex flex-col">
+        <div className="p-4 md:p-6 bg-white rounded-t-3xl border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
@@ -50,6 +63,23 @@ export default function ExpensesClient({
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium"
             />
+          </div>
+          <div className="w-full sm:w-auto flex items-center gap-2">
+            <div className="w-48">
+              <CustomDatePicker 
+                value={dateFilter}
+                onChange={setDateFilter}
+                placeholder="Filter by date..."
+              />
+            </div>
+            {dateFilter && (
+              <button
+                onClick={() => setDateFilter(undefined)}
+                className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg"
+              >
+                Clear
+              </button>
+            )}
           </div>
         </div>
 

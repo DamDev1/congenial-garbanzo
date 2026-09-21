@@ -122,17 +122,17 @@ export async function updateProduct(id: string, data: {
   revalidatePath('/owner/products');
   revalidatePath('/manager/inventory');
   revalidatePath('/cashier/checkout');
-  
+
   return JSON.parse(JSON.stringify(updatedProduct));
 }
 
 export async function deleteProduct(id: string) {
   await connectToDatabase();
-  
+
   await Product.findByIdAndDelete(id);
-  // Also delete associated inventory
   await Inventory.deleteMany({ productId: id });
 
   revalidatePath('/owner/products');
   return { success: true };
 }
+

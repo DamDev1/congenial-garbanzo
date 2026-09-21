@@ -13,8 +13,8 @@ export default async function ProductsPage() {
           <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">Products</h2>
           <p className="text-slate-500 font-medium mt-1">Manage your soft drinks catalog and pricing.</p>
         </div>
-        <Link 
-          href="/owner/products/new" 
+        <Link
+          href="/owner/products/new"
           className="flex items-center gap-2 bg-[#3B41E3] hover:bg-[#2A2FC3] text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-[0_4px_12px_-4px_rgba(59,65,227,0.5)]"
         >
           <Plus className="w-5 h-5" />

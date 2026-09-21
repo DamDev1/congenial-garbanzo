@@ -57,8 +57,8 @@ export default function ProductRowActions({ productId }: { productId: string }) 
         )}
       </Dropdown>
 
-      <Modal 
-        isOpen={showDeleteModal} 
+      <Modal
+        isOpen={showDeleteModal}
         onClose={() => !isDeleting && setShowDeleteModal(false)}
         title="Delete Product"
       >
@@ -69,18 +69,18 @@ export default function ProductRowActions({ productId }: { productId: string }) 
           <p className="text-slate-600">
             Are you sure you want to delete this product? This will permanently remove it from the catalog and delete its inventory tracking across all branches.
           </p>
-          
+
           <div className="flex items-center gap-3 w-full mt-6">
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               onClick={() => setShowDeleteModal(false)}
               disabled={isDeleting}
               className="!bg-white !text-slate-700 border border-slate-200 hover:!bg-slate-50 shadow-sm flex-1"
             >
               Cancel
             </Button>
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               onClick={handleDelete}
               isLoading={isDeleting}
               className="!bg-red-600 hover:!bg-red-700 shadow-[0_8px_16px_-6px_rgba(220,38,38,0.4)] flex-1"
