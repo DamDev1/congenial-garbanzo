@@ -13,5 +13,5 @@ export default async function OwnerExpensesPage() {
 
   const expenses = await getExpenses('all'); // Show all expenses by default
 
-  return <ExpensesClient initialExpenses={expenses} userRole="owner" />;
+  return <ExpensesClient initialExpenses={expenses} userRole="owner" isOwner={true} />;
 }

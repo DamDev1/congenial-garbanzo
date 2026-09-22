@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Receipt, Search, Filter } from 'lucide-react';
+import { Receipt, Search, Filter, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ReceiptModal } from '@/app/(dashboard)/cashier/checkout/ReceiptModal';
+import { deleteTransaction } from '@/lib/actions/dashboard';
 
-export default function SalesClient({ initialSales, initialFilter }: { initialSales: any[], initialFilter: string }) {
+export default function SalesClient({ initialSales, initialFilter, isOwner }: { initialSales: any[], initialFilter: string, isOwner?: boolean }) {
   const router = useRouter();
   const [filter, setFilter] = useState(initialFilter);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
@@ -128,7 +129,7 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
                     <td className="px-6 py-4 whitespace-nowrap font-bold text-slate-900">
                       ₦{sale.totalAmount.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right flex justify-end gap-2">
                       <Button 
                         type="button"
                         onClick={() => setSelectedTransaction(sale)}
@@ -137,6 +138,24 @@ export default function SalesClient({ initialSales, initialFilter }: { initialSa
                         <Receipt className="w-4 h-4 mr-2" />
                         View Receipt
                       </Button>
+                      
+                      {isOwner && (
+                        <Button
+                          type="button"
+                          onClick={async () => {
+                            if (window.confirm('Are you sure you want to delete this sale? This action cannot be undone.')) {
+                              try {
+                                await deleteTransaction(sale._id);
+                              } catch (e: any) {
+                                alert(e.message);
+                              }
+                            }
+                          }}
+                          className="!bg-red-50 !text-red-600 border border-red-200 hover:!bg-red-100 shadow-sm"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))

@@ -1,6 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import connectDB from '../db/mongoose';
 import Transfer from '../models/Transfer';
 import Inventory from '../models/Inventory';
@@ -134,4 +136,22 @@ export async function getBranchInventoryForTransfer(branchId: string) {
     .lean();
     
   return JSON.parse(JSON.stringify(inventory.filter((i: any) => i.productId)));
+}
+
+export async function deleteTransfer(id: string) {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  await connectDB();
+  const transfer = await Transfer.findByIdAndDelete(id);
+  
+  if (!transfer) {
+    throw new Error('Transfer not found');
+  }
+
+  revalidatePath('/owner/transfers');
+  
+  return true;
 }

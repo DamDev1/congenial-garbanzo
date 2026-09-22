@@ -1,19 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, Receipt } from 'lucide-react';
+import { Plus, Search, Receipt, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { CustomDatePicker } from '@/components/ui/CustomDatePicker';
 import { ExpenseFormModal } from './ExpenseFormModal';
+import { deleteExpense } from '@/lib/actions/expenses';
 
 export default function ExpensesClient({ 
   initialExpenses, 
   branchId,
-  userRole
+  userRole,
+  isOwner
 }: { 
   initialExpenses: any[]; 
   branchId?: string;
   userRole: string;
+  isOwner?: boolean;
 }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -93,6 +96,7 @@ export default function ExpensesClient({
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Amount</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Branch</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Recorded By</th>
+                {isOwner && <th className="px-6 py-4 text-right"></th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -139,6 +143,25 @@ export default function ExpensesClient({
                         {expense.recordedBy?.name || 'Unknown'}
                       </div>
                     </td>
+                    {isOwner && (
+                      <td className="px-6 py-4 text-right">
+                        <Button
+                          type="button"
+                          onClick={async () => {
+                            if (window.confirm('Are you sure you want to delete this expense? This action cannot be undone.')) {
+                              try {
+                                await deleteExpense(expense._id);
+                              } catch (e: any) {
+                                alert(e.message);
+                              }
+                            }
+                          }}
+                          className="!bg-red-50 !text-red-600 border border-red-200 hover:!bg-red-100 shadow-sm"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}

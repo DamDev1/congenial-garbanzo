@@ -30,7 +30,7 @@ export default async function OwnerSalesPage({
         </div>
       </div>
 
-      <SalesClient initialSales={sales} initialFilter={filter} />
+      <SalesClient initialSales={sales} initialFilter={filter} isOwner={true} />
     </div>
   );
 }

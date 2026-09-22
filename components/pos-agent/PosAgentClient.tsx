@@ -1,20 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, ArrowRightLeft } from 'lucide-react';
+import { Plus, Search, ArrowRightLeft, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PosAgentFormModal } from './PosAgentFormModal';
+import { deletePosExchange } from '@/lib/actions/pos-agent';
 
 export default function PosAgentClient({ 
   initialExchanges, 
   branchId,
   userRole,
-  userId
+  userId,
+  isOwner
 }: { 
   initialExchanges: any[]; 
   branchId?: string;
   userRole: string;
   userId: string;
+  isOwner?: boolean;
 }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,6 +69,7 @@ export default function PosAgentClient({
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Transfer Received</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Fee</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Recorded By</th>
+                {isOwner && <th className="px-6 py-4 text-right"></th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -112,6 +116,25 @@ export default function PosAgentClient({
                         {exchange.recordedBy?.name || 'Unknown'}
                       </div>
                     </td>
+                    {isOwner && (
+                      <td className="px-6 py-4 text-right">
+                        <Button
+                          type="button"
+                          onClick={async () => {
+                            if (window.confirm('Are you sure you want to delete this POS exchange? This action cannot be undone.')) {
+                              try {
+                                await deletePosExchange(exchange._id);
+                              } catch (e: any) {
+                                alert(e.message);
+                              }
+                            }
+                          }}
+                          className="!bg-red-50 !text-red-600 border border-red-200 hover:!bg-red-100 shadow-sm"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}

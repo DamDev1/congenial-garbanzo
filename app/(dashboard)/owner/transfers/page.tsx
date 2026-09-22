@@ -20,6 +20,7 @@ export default async function OwnerTransfersPage() {
       initialTransfers={transfers} 
       branches={branches}
       currentUser={session.user}
+      isOwner={true}
     />
   );
 }

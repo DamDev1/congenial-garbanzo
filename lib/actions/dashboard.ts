@@ -1,6 +1,7 @@
 'use server';
 
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 import { authOptions } from '@/lib/auth';
 import connectToDatabase from '@/lib/db/mongoose';
 import Branch from '@/lib/models/Branch';
@@ -283,4 +284,23 @@ export async function getOwnerSales(filter: 'today' | 'week' | 'month' | 'all' =
     .lean();
 
   return JSON.parse(JSON.stringify(sales));
+}
+
+export async function deleteTransaction(id: string) {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  await connectToDatabase();
+  const transaction = await Transaction.findByIdAndDelete(id);
+  
+  if (!transaction) {
+    throw new Error('Transaction not found');
+  }
+
+  revalidatePath('/owner/sales');
+  revalidatePath('/owner');
+  
+  return true;
 }

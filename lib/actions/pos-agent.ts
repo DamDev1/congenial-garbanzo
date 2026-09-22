@@ -1,6 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import connectDB from '../db/mongoose';
 import PosExchange from '../models/PosExchange';
 import '../models/User';
@@ -72,4 +74,23 @@ export async function getPosExchanges(branchId?: string, filter: 'today' | 'week
     .lean();
 
   return JSON.parse(JSON.stringify(exchanges));
+}
+
+export async function deletePosExchange(id: string) {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  await connectDB();
+  const exchange = await PosExchange.findByIdAndDelete(id);
+  
+  if (!exchange) {
+    throw new Error('POS Exchange not found');
+  }
+
+  revalidatePath('/owner/pos-agent');
+  revalidatePath('/owner');
+  
+  return true;
 }

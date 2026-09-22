@@ -21,6 +21,7 @@ export default async function OwnerPosAgentPage() {
       initialExchanges={exchanges} 
       userRole="owner" 
       userId={session.user.id}
+      isOwner={true}
     />
   );
 }

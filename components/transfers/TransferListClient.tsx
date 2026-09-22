@@ -1,18 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowRightLeft, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { ArrowRightLeft, CheckCircle, XCircle, Clock, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { completeTransfer, cancelTransfer } from '@/lib/actions/transfer';
+import { completeTransfer, cancelTransfer, deleteTransfer } from '@/lib/actions/transfer';
 import { TransferFormModal } from './TransferFormModal';
 
 interface TransferListClientProps {
   initialTransfers: any[];
   branches: any[];
   currentUser: any;
+  isOwner?: boolean;
 }
 
-export default function TransferListClient({ initialTransfers, branches, currentUser }: TransferListClientProps) {
+export default function TransferListClient({ initialTransfers, branches, currentUser, isOwner }: TransferListClientProps) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
@@ -153,6 +154,25 @@ export default function TransferListClient({ initialTransfers, branches, current
                               Receive Stock
                             </Button>
                           )}
+                        </div>
+                      )}
+                      {isOwner && (
+                        <div className="flex justify-end gap-2 mt-2">
+                          <Button
+                            type="button"
+                            onClick={async () => {
+                              if (window.confirm('Are you sure you want to delete this transfer record? This action cannot be undone.')) {
+                                try {
+                                  await deleteTransfer(transfer._id);
+                                } catch (e: any) {
+                                  alert(e.message);
+                                }
+                              }
+                            }}
+                            className="!bg-red-50 !text-red-600 border border-red-200 hover:!bg-red-100 shadow-sm !py-1.5 !px-3 text-xs"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+                          </Button>
                         </div>
                       )}
                     </td>

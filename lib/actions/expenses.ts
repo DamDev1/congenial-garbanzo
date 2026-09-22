@@ -1,6 +1,7 @@
 'use server';
 
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 import { authOptions } from '@/lib/auth';
 import connectToDatabase from '@/lib/db/mongoose';
 import Expense from '@/lib/models/Expense';
@@ -117,4 +118,23 @@ export async function getExpenses(filter: 'today' | 'week' | 'month' | 'all' = '
     .lean();
 
   return JSON.parse(JSON.stringify(expenses));
+}
+
+export async function deleteExpense(id: string) {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  await connectToDatabase();
+  const expense = await Expense.findByIdAndDelete(id);
+  
+  if (!expense) {
+    throw new Error('Expense not found');
+  }
+
+  revalidatePath('/owner/expenses');
+  revalidatePath('/owner');
+  
+  return true;
 }
