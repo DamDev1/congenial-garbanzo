@@ -52,3 +52,11 @@ test_stats.ts
 test_stats_2.ts
 test_pos.ts
 .env.local
+delete_record.js
+delete_records.js
+find_records.js
+find_records.ts
+
+remove_records.js
+delete_sales.js
+view_record.js
