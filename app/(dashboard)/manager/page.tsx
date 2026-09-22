@@ -91,7 +91,7 @@ export default async function ManagerDashboardPage(
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Cash</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Net Cash</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodCashTotal?.toLocaleString() || '0'}</h3>
             </div>
           </div>
@@ -102,8 +102,30 @@ export default async function ManagerDashboardPage(
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Transfer </p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Net Transfer </p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodTransferTotal?.toLocaleString() || '0'}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Gross Cash */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-500/5 rounded-full blur-2xl group-hover:bg-green-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Cash (Gross)</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodGrossCashTotal?.toLocaleString() || '0'}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Gross Transfer */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Transfer (Gross)</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodGrossTransferTotal?.toLocaleString() || '0'}</h3>
             </div>
           </div>
         </div>

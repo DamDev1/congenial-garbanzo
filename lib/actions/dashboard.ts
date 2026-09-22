@@ -53,8 +53,10 @@ export async function getOwnerDashboardStats(dateStr?: string) {
 
   const todaySalesTotal = todaySalesAgg[0]?.total ?? 0;
   const todaySalesCount = todaySalesAgg[0]?.count ?? 0;
-  let todayCashTotal = todaySalesAgg[0]?.cashTotal ?? 0;
-  let todayTransferTotal = todaySalesAgg[0]?.transferTotal ?? 0;
+  const todayGrossCashTotal = todaySalesAgg[0]?.cashTotal ?? 0;
+  const todayGrossTransferTotal = todaySalesAgg[0]?.transferTotal ?? 0;
+  let todayCashTotal = todayGrossCashTotal;
+  let todayTransferTotal = todayGrossTransferTotal;
   const todayDebtTotal = todaySalesAgg[0]?.creditTotal ?? 0;
 
   const expensesAgg = await Expense.aggregate([
@@ -124,6 +126,8 @@ export async function getOwnerDashboardStats(dateStr?: string) {
     todaySalesCount,
     todayCashTotal,
     todayTransferTotal,
+    todayGrossCashTotal,
+    todayGrossTransferTotal,
     todayDebtTotal,
     todayExpensesTotal,
     totalDebt, // All-time total debt
@@ -171,8 +175,10 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     .lean();
 
   const totalRevenue = transactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
-  let periodCashTotal = transactions.reduce((sum, t) => sum + (t.cashAmount || 0), 0);
-  let periodTransferTotal = transactions.reduce((sum, t) => sum + (t.transferAmount || 0), 0);
+  const periodGrossCashTotal = transactions.reduce((sum, t) => sum + (t.cashAmount || 0), 0);
+  const periodGrossTransferTotal = transactions.reduce((sum, t) => sum + (t.transferAmount || 0), 0);
+  let periodCashTotal = periodGrossCashTotal;
+  let periodTransferTotal = periodGrossTransferTotal;
   const periodDebtTotal = transactions.reduce((sum, t) => sum + (t.creditAmount || 0), 0);
   
   // Calculate outstanding debt from credit transactions (all time for branch)
@@ -215,6 +221,8 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
     totalRevenue,
     periodCashTotal,
     periodTransferTotal,
+    periodGrossCashTotal,
+    periodGrossTransferTotal,
     periodDebtTotal,
     periodExpensesTotal,
     totalDebt,

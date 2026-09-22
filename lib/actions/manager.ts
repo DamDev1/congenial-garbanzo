@@ -91,6 +91,8 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
       totalItemsSold: 0,
       periodCashTotal: 0 - cashExpenses - posCashGiven,
       periodTransferTotal: 0 - transferExpenses + posTransferReceived,
+      periodGrossCashTotal: 0,
+      periodGrossTransferTotal: 0,
       periodDebtTotal: 0,
       periodExpensesTotal
     };
@@ -102,6 +104,8 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
     totalItemsSold: stats[0].totalItemsSold || 0,
     periodCashTotal: (stats[0].periodCashTotal || 0) - cashExpenses - posCashGiven,
     periodTransferTotal: (stats[0].periodTransferTotal || 0) - transferExpenses + posTransferReceived,
+    periodGrossCashTotal: stats[0].periodCashTotal || 0,
+    periodGrossTransferTotal: stats[0].periodTransferTotal || 0,
     periodDebtTotal: stats[0].periodDebtTotal || 0,
     periodExpensesTotal
   };

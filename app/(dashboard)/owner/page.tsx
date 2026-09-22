@@ -48,7 +48,7 @@ export default async function OwnerDashboardPage(
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Cash</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Net Cash</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayCashTotal.toLocaleString()}</div>
@@ -59,12 +59,35 @@ export default async function OwnerDashboardPage(
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Transfer</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Net Transfer</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayTransferTotal.toLocaleString()}</div>
           </div>
         </div>
+
+        {/* Gross Cash */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/5 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-slate-600 text-sm">Total Cash (Gross)</h3>
+          </div>
+          <div className="flex items-end justify-between mt-2">
+            <div className="text-2xl font-extrabold text-slate-800">₦{(stats.todayGrossCashTotal || 0).toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Gross Transfer */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-slate-600 text-sm">Total Transfer (Gross)</h3>
+          </div>
+          <div className="flex items-end justify-between mt-2">
+            <div className="text-2xl font-extrabold text-slate-800">₦{(stats.todayGrossTransferTotal || 0).toLocaleString()}</div>
+          </div>
+        </div>
+
 
         {/* Today's Debt */}
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">

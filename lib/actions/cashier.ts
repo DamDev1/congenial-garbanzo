@@ -89,6 +89,8 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
       totalItemsSold: 0,
       cashTotal: 0 - posCashGiven - cashExpenses,
       transferTotal: 0 + posTransferReceived - transferExpenses,
+      grossCashTotal: 0,
+      grossTransferTotal: 0,
       creditTotal: 0,
       expensesTotal
     };
@@ -100,6 +102,8 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
     totalItemsSold: stats[0].totalItemsSold,
     cashTotal: stats[0].cashTotal - posCashGiven - cashExpenses,
     transferTotal: stats[0].transferTotal + posTransferReceived - transferExpenses,
+    grossCashTotal: stats[0].cashTotal,
+    grossTransferTotal: stats[0].transferTotal,
     creditTotal: stats[0].creditTotal,
     expensesTotal
   };
