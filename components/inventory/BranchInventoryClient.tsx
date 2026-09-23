@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Package, Search, ArrowLeft, PackagePlus } from 'lucide-react';
-import { AddStockModal } from '@/components/inventory/AddStockModal';
+import { AdjustStockModal } from '@/components/inventory/AdjustStockModal';
 
 export default function BranchInventoryClient({ branch, inventory }: { branch: any, inventory: any[] }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -88,7 +88,7 @@ export default function BranchInventoryClient({ branch, inventory }: { branch: a
                         className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-100"
                       >
                         <PackagePlus className="w-4 h-4" />
-                        Add Stock
+                        Adjust Stock
                       </button>
                     </td>
                   </tr>
@@ -98,8 +98,7 @@ export default function BranchInventoryClient({ branch, inventory }: { branch: a
           </table>
         </div>
       </div>
-
-      <AddStockModal
+      <AdjustStockModal
         isOpen={!!selectedItem}
         onClose={() => setSelectedItem(null)}
         inventoryItem={selectedItem}

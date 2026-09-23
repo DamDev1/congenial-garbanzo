@@ -107,7 +107,7 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
   const cashierUser = await User.findById(cashierId).lean();
   const branchId = cashierUser?.branchId;
   const branchCustomers = branchId ? await Customer.find({ branchId }).lean() : [];
-  const totalDebt = branchCustomers.reduce((sum, c) => sum + (c.debtBalance || 0), 0);
+  const totalDebt = branchCustomers.reduce((sum: number, c: any) => sum + (c.debtBalance || 0), 0);
 
   if (stats.length === 0) {
     return {

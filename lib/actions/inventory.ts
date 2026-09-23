@@ -70,6 +70,33 @@ export async function addInventoryStock(inventoryId: string, quantityToAdd: numb
   return JSON.parse(JSON.stringify(inventory));
 }
 
+export async function reduceInventoryStock(inventoryId: string, quantityToReduce: number) {
+  await connectDB();
+
+  if (quantityToReduce <= 0) {
+    throw new Error('Quantity must be greater than zero');
+  }
+
+  const inventory = await Inventory.findById(inventoryId);
+  if (!inventory) {
+    throw new Error('Inventory record not found');
+  }
+
+  if (inventory.quantity < quantityToReduce) {
+    throw new Error('Not enough stock to reduce');
+  }
+
+  inventory.quantity -= quantityToReduce;
+  await inventory.save();
+
+  revalidatePath('/manager/inventory');
+  revalidatePath('/cashier/checkout');
+  revalidatePath(`/owner/branches/${inventory.branchId}`);
+  revalidatePath(`/owner/branches/${inventory.branchId}/inventory`);
+
+  return JSON.parse(JSON.stringify(inventory));
+}
+
 export async function addStockToBranch(productId: string, branchId: string, quantityToAdd: number) {
   await connectDB();
 

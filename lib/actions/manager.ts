@@ -10,6 +10,7 @@ import '../models/Customer';
 import '../models/Product';
 import DebtPayment from '../models/DebtPayment';
 import mongoose from 'mongoose';
+import Customer from '../models/Customer';
 
 export async function getManagerStats(branchId: string, dateStr?: string) {
   await connectDB();
@@ -43,7 +44,7 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
 
   // Calculate total outstanding debt from all customers for this branch
   const branchCustomers = await Customer.find({ branchId }).lean();
-  const totalDebt = branchCustomers.reduce((sum, c) => sum + (c.debtBalance || 0), 0);
+  const totalDebt = branchCustomers.reduce((sum: number, c: any) => sum + (c.debtBalance || 0), 0);
 
   const expensesAgg = await Expense.aggregate([
     {

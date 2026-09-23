@@ -65,47 +65,47 @@ export default async function BranchDrillDownPage({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all" />
-          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
+          {/* <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
             <TrendingUp className="w-6 h-6" />
-          </div>
+          </div> */}
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Revenue</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1">₦{totalRevenue.toLocaleString()}</h3>
         </div>
 
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all" />
-          <div className="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-4">
+          {/* <div className="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-4">
             <Wallet className="w-6 h-6" />
-          </div>
+          </div> */}
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Total Customer Debt</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1">₦{totalDebt.toLocaleString()}</h3>
         </div>
 
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-teal-500/10 rounded-full blur-2xl group-hover:bg-teal-500/20 transition-all" />
-          <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-4">
+          {/* <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-4">
             <TrendingUp className="w-6 h-6" />
-          </div>
+          </div> */}
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Debt Recovered</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1">₦{(debtRecovered || 0).toLocaleString()}</h3>
         </div>
 
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all" />
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
+          {/* <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
             <Package className="w-6 h-6" />
-          </div>
+          </div> */}
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Stock Value</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1">₦{totalStockValue.toLocaleString()}</h3>
         </div>
 
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden">
-          <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
+          {/* <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
             <UserIcon className="w-6 h-6" />
-          </div>
+          </div> */}
           <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Manager</p>
           <h3 className="text-lg font-bold text-slate-900 mt-1">{manager ? manager.name : 'Unassigned'}</h3>
           {manager && <p className="text-sm text-slate-500 truncate">@{manager.username} &bull; {manager.phone}</p>}

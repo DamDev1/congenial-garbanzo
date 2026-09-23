@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { MoreVertical, Edit2, PackagePlus } from 'lucide-react';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { ManagerProductFormModal } from './ManagerProductFormModal';
-import { AddStockModal } from './AddStockModal';
+import { AdjustStockModal } from './AdjustStockModal';
 
 interface ManagerInventoryRowActionsProps {
   item: any;
@@ -59,7 +59,7 @@ export default function ManagerInventoryRowActions({ item, brands, currentUser }
         product={item.productId}
       />
 
-      <AddStockModal
+      <AdjustStockModal
         isOpen={showAddStockModal}
         onClose={() => setShowAddStockModal(false)}
         inventoryItem={item}
