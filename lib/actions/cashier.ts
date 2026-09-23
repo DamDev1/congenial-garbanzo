@@ -3,17 +3,19 @@
 import connectDB from '../db/mongoose';
 import Transaction from '../models/Transaction';
 import '../models/Branch';
-import '../models/User';
+import User from '../models/User';
 import Expense from '../models/Expense';
 import PosExchange from '../models/PosExchange';
+import DebtPayment from '../models/DebtPayment';
+import Customer from '../models/Customer';
 import mongoose from 'mongoose';
 
 export async function getCashierStats(cashierId: string, dateStr?: string) {
   await connectDB();
-  
+
   const startOfDay = dateStr ? new Date(dateStr) : new Date();
   startOfDay.setHours(0, 0, 0, 0);
-  
+
   const endOfDay = dateStr ? new Date(dateStr) : new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
@@ -56,7 +58,7 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
   let expensesTotal = 0;
   let cashExpenses = 0;
   let transferExpenses = 0;
-  
+
   expensesAgg.forEach((exp) => {
     expensesTotal += exp.total;
     if (exp._id === 'cash') cashExpenses += exp.total;
@@ -82,17 +84,44 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
   const posCashGiven = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalCashGiven : 0;
   const posTransferReceived = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalTransferReceived : 0;
 
+  const debtPaymentAgg = await DebtPayment.aggregate([
+    {
+      $match: {
+        cashierId: new mongoose.Types.ObjectId(cashierId),
+        createdAt: { $gte: startOfDay, $lte: endOfDay }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalCash: { $sum: '$cashAmount' },
+        totalTransfer: { $sum: '$transferAmount' }
+      }
+    }
+  ]);
+
+  const debtPaymentCash = debtPaymentAgg.length > 0 ? debtPaymentAgg[0].totalCash : 0;
+  const debtPaymentTransfer = debtPaymentAgg.length > 0 ? debtPaymentAgg[0].totalTransfer : 0;
+
+  // Calculate total outstanding debt from all customers for this branch
+  const cashierUser = await User.findById(cashierId).lean();
+  const branchId = cashierUser?.branchId;
+  const branchCustomers = branchId ? await Customer.find({ branchId }).lean() : [];
+  const totalDebt = branchCustomers.reduce((sum, c) => sum + (c.debtBalance || 0), 0);
+
   if (stats.length === 0) {
     return {
       totalRevenue: 0,
       salesCount: 0,
       totalItemsSold: 0,
-      cashTotal: 0 - posCashGiven - cashExpenses,
-      transferTotal: 0 + posTransferReceived - transferExpenses,
-      grossCashTotal: 0,
-      grossTransferTotal: 0,
+      cashTotal: 0 + debtPaymentCash - posCashGiven - cashExpenses,
+      transferTotal: 0 + debtPaymentTransfer + posTransferReceived - transferExpenses,
+      grossCashTotal: debtPaymentCash,
+      grossTransferTotal: debtPaymentTransfer,
       creditTotal: 0,
-      expensesTotal
+      expensesTotal,
+      totalDebt,
+      debtRecovered: debtPaymentCash + debtPaymentTransfer
     };
   }
 
@@ -100,21 +129,23 @@ export async function getCashierStats(cashierId: string, dateStr?: string) {
     totalRevenue: stats[0].totalRevenue,
     salesCount: stats[0].salesCount,
     totalItemsSold: stats[0].totalItemsSold,
-    cashTotal: stats[0].cashTotal - posCashGiven - cashExpenses,
-    transferTotal: stats[0].transferTotal + posTransferReceived - transferExpenses,
-    grossCashTotal: stats[0].cashTotal,
-    grossTransferTotal: stats[0].transferTotal,
+    cashTotal: stats[0].cashTotal + debtPaymentCash - posCashGiven - cashExpenses,
+    transferTotal: stats[0].transferTotal + debtPaymentTransfer + posTransferReceived - transferExpenses,
+    grossCashTotal: stats[0].cashTotal + debtPaymentCash,
+    grossTransferTotal: stats[0].transferTotal + debtPaymentTransfer,
     creditTotal: stats[0].creditTotal,
-    expensesTotal
+    expensesTotal,
+    totalDebt,
+    debtRecovered: debtPaymentCash + debtPaymentTransfer
   };
 }
 
 export async function getCashierSales(cashierId: string, filter: 'today' | 'week' | 'month' | 'all' = 'today') {
   await connectDB();
-  
+
   let dateQuery = {};
   const now = new Date();
-  
+
   if (filter === 'today') {
     const start = new Date(now.setHours(0, 0, 0, 0));
     dateQuery = { $gte: start };

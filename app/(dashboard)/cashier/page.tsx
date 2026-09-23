@@ -71,8 +71,22 @@ export default async function CashierDashboardPage(
         {/* Debt */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-orange-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Debt</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">New Debt Today</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.creditTotal.toLocaleString()}</h3>
+        </div>
+
+        {/* Debt Recovered */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-teal-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Debt Recovered</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{(stats.debtRecovered || 0).toLocaleString()}</h3>
+        </div>
+
+        {/* Lifetime Debt */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-red-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Total Branch Debt</p>
+          <h3 className="text-3xl font-extrabold text-red-600 mt-1 relative z-10">₦{(stats.totalDebt || 0).toLocaleString()}</h3>
         </div>
 
         {/* Expenses */}

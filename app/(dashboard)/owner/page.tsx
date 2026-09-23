@@ -93,10 +93,32 @@ export default async function OwnerDashboardPage(
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-orange-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Debt</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">New Debt Issued Today</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayDebtTotal.toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Debt Recovered */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-teal-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-slate-600 text-sm">Debt Recovered Today</h3>
+          </div>
+          <div className="flex items-end justify-between mt-2">
+            <div className="text-2xl font-extrabold text-slate-800">₦{(stats.debtRecovered || 0).toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Total Debt */}
+        <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-red-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-slate-600 text-sm">Total Debt (All Branches)</h3>
+          </div>
+          <div className="flex items-end justify-between mt-2">
+            <div className="text-2xl font-extrabold text-red-600">₦{stats.totalDebt.toLocaleString()}</div>
           </div>
         </div>
 

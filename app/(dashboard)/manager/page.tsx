@@ -130,13 +130,35 @@ export default async function ManagerDashboardPage(
           </div>
         </div>
 
-        {/* Debt */}
+        {/* Period Debt */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Debt </p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">New Debt Issued</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodDebtTotal?.toLocaleString() || '0'}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Debt Recovered */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-teal-500/10 rounded-full blur-2xl group-hover:bg-teal-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Debt Recovered</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{(salesStats.debtRecovered || 0).toLocaleString()}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Debt (Lifetime) */}
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-colors" />
+          <div className="flex items-center gap-4 mb-4 relative z-10">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Debt (Lifetime) </p>
+              <h3 className="text-xl sm:text-2xl font-black text-red-600 truncate">₦{salesStats.totalDebt?.toLocaleString() || '0'}</h3>
             </div>
           </div>
         </div>

@@ -20,7 +20,7 @@ export default async function BranchDrillDownPage({
     notFound();
   }
 
-  const { branch, manager, totalRevenue, totalDebt, totalStockValue, transactions, inventory } = data;
+  const { branch, manager, totalRevenue, totalDebt, totalStockValue, transactions, inventory, debtRecovered } = data;
 
   const filters = [
     { label: 'Today', value: 'today' },
@@ -80,8 +80,17 @@ export default async function BranchDrillDownPage({
           <div className="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-4">
             <Wallet className="w-6 h-6" />
           </div>
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Customer Debt</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Total Customer Debt</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1">₦{totalDebt.toLocaleString()}</h3>
+        </div>
+
+        <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-teal-500/10 rounded-full blur-2xl group-hover:bg-teal-500/20 transition-all" />
+          <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-4">
+            <TrendingUp className="w-6 h-6" />
+          </div>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Debt Recovered</p>
+          <h3 className="text-3xl font-extrabold text-slate-900 mt-1">₦{(debtRecovered || 0).toLocaleString()}</h3>
         </div>
 
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden group">

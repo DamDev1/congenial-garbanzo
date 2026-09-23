@@ -8,14 +8,15 @@ import Expense from '../models/Expense';
 import PosExchange from '../models/PosExchange';
 import '../models/Customer';
 import '../models/Product';
+import DebtPayment from '../models/DebtPayment';
 import mongoose from 'mongoose';
 
 export async function getManagerStats(branchId: string, dateStr?: string) {
   await connectDB();
-  
+
   const startOfDay = dateStr ? new Date(dateStr) : new Date();
   startOfDay.setHours(0, 0, 0, 0);
-  
+
   const endOfDay = dateStr ? new Date(dateStr) : new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
@@ -40,6 +41,10 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
     }
   ]);
 
+  // Calculate total outstanding debt from all customers for this branch
+  const branchCustomers = await Customer.find({ branchId }).lean();
+  const totalDebt = branchCustomers.reduce((sum, c) => sum + (c.debtBalance || 0), 0);
+
   const expensesAgg = await Expense.aggregate([
     {
       $match: {
@@ -54,11 +59,11 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
       },
     },
   ]);
-  
+
   let periodExpensesTotal = 0;
   let cashExpenses = 0;
   let transferExpenses = 0;
-  
+
   expensesAgg.forEach((exp) => {
     periodExpensesTotal += exp.total;
     if (exp._id === 'cash') cashExpenses += exp.total;
@@ -84,17 +89,38 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
   const posCashGiven = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalCashGiven : 0;
   const posTransferReceived = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalTransferReceived : 0;
 
+  const debtPaymentAgg = await DebtPayment.aggregate([
+    {
+      $match: {
+        branchId: new mongoose.Types.ObjectId(branchId),
+        createdAt: { $gte: startOfDay, $lte: endOfDay }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalCash: { $sum: '$cashAmount' },
+        totalTransfer: { $sum: '$transferAmount' }
+      }
+    }
+  ]);
+
+  const debtPaymentCash = debtPaymentAgg.length > 0 ? debtPaymentAgg[0].totalCash : 0;
+  const debtPaymentTransfer = debtPaymentAgg.length > 0 ? debtPaymentAgg[0].totalTransfer : 0;
+
   if (stats.length === 0) {
     return {
       totalRevenue: 0,
       salesCount: 0,
       totalItemsSold: 0,
-      periodCashTotal: 0 - cashExpenses - posCashGiven,
-      periodTransferTotal: 0 - transferExpenses + posTransferReceived,
-      periodGrossCashTotal: 0,
-      periodGrossTransferTotal: 0,
+      periodCashTotal: 0 + debtPaymentCash - cashExpenses - posCashGiven,
+      periodTransferTotal: 0 + debtPaymentTransfer - transferExpenses + posTransferReceived,
+      periodGrossCashTotal: debtPaymentCash,
+      periodGrossTransferTotal: debtPaymentTransfer,
       periodDebtTotal: 0,
-      periodExpensesTotal
+      periodExpensesTotal,
+      totalDebt,
+      debtRecovered: debtPaymentCash + debtPaymentTransfer
     };
   }
 
@@ -102,21 +128,23 @@ export async function getManagerStats(branchId: string, dateStr?: string) {
     totalRevenue: stats[0].totalRevenue || 0,
     salesCount: stats[0].salesCount || 0,
     totalItemsSold: stats[0].totalItemsSold || 0,
-    periodCashTotal: (stats[0].periodCashTotal || 0) - cashExpenses - posCashGiven,
-    periodTransferTotal: (stats[0].periodTransferTotal || 0) - transferExpenses + posTransferReceived,
-    periodGrossCashTotal: stats[0].periodCashTotal || 0,
-    periodGrossTransferTotal: stats[0].periodTransferTotal || 0,
+    periodCashTotal: (stats[0].periodCashTotal || 0) + debtPaymentCash - cashExpenses - posCashGiven,
+    periodTransferTotal: (stats[0].periodTransferTotal || 0) + debtPaymentTransfer - transferExpenses + posTransferReceived,
+    periodGrossCashTotal: (stats[0].periodCashTotal || 0) + debtPaymentCash,
+    periodGrossTransferTotal: (stats[0].periodTransferTotal || 0) + debtPaymentTransfer,
     periodDebtTotal: stats[0].periodDebtTotal || 0,
-    periodExpensesTotal
+    periodExpensesTotal,
+    totalDebt,
+    debtRecovered: debtPaymentCash + debtPaymentTransfer
   };
 }
 
 export async function getManagerSales(branchId: string, filter: 'today' | 'week' | 'month' | 'all' = 'today') {
   await connectDB();
-  
+
   let dateQuery = {};
   const now = new Date();
-  
+
   if (filter === 'today') {
     const start = new Date(now.setHours(0, 0, 0, 0));
     dateQuery = { $gte: start };

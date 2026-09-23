@@ -60,3 +60,6 @@ find_records.ts
 remove_records.js
 delete_sales.js
 view_record.js
+
+drop-email-index.ts
+/remove-email-field.ts
