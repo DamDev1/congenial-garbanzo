@@ -47,6 +47,7 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
         {/* Header */}
         <div className="text-center mb-4 pb-3 border-b border-dashed border-slate-300">
           <h3 className="font-black text-base tracking-wide text-slate-900 uppercase">De-Luv Investment Limited</h3>
+          <p className="text-sm font-bold text-slate-700 mt-1">Tel: 08035370718</p>
         </div>
 
         {/* Sale Info */}
