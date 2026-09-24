@@ -2,6 +2,7 @@ import { getBranchStats } from '@/lib/actions/dashboard';
 import Link from 'next/link';
 import { ArrowLeft, User as UserIcon, Wallet, TrendingUp, Package, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import EditBranchModal from '@/components/branches/EditBranchModal';
 
 export default async function BranchDrillDownPage({
   params,
@@ -44,6 +45,7 @@ export default async function BranchDrillDownPage({
                   Deactivated
                 </span>
               )}
+              <EditBranchModal branch={{ _id: branch._id.toString(), name: branch.name, location: branch.location }} />
             </div>
             <p className="text-slate-500 font-medium mt-1">{branch.location}</p>
           </div>

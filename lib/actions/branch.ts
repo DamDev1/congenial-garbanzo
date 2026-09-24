@@ -57,3 +57,23 @@ export async function toggleBranchStatus(id: string, isActive: boolean) {
   await Branch.findByIdAndUpdate(id, { isActive });
   revalidatePath('/owner/branches');
 }
+
+export async function updateBranch(id: string, formData: FormData) {
+  const session = await getServerSession(authOptions);
+
+  if (session?.user?.role !== 'owner') {
+    throw new Error('Unauthorized');
+  }
+
+  const name = formData.get('name') as string;
+  const location = formData.get('location') as string;
+
+  if (!name || !location) {
+    throw new Error('Name and location are required');
+  }
+
+  await connectToDatabase();
+  await Branch.findByIdAndUpdate(id, { name, location });
+  revalidatePath('/owner/branches');
+  revalidatePath(`/owner/branches/${id}`);
+}
