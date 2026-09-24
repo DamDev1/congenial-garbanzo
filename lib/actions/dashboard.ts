@@ -100,6 +100,7 @@ export async function getOwnerDashboardStats(dateStr?: string) {
   const posCashGiven = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalCashGiven : 0;
   const posTransferReceived = posExchangeAgg.length > 0 ? posExchangeAgg[0].totalTransferReceived : 0;
 
+  todayGrossTransferTotal += posTransferReceived;
   todayCashTotal -= posCashGiven;
   todayTransferTotal += posTransferReceived;
 
@@ -225,6 +226,7 @@ export async function getBranchStats(branchId: string, filter: string = 'today')
   const posCashGiven = posExchanges.reduce((sum, p: any) => sum + (p.cashGiven || 0), 0);
   const posTransferReceived = posExchanges.reduce((sum, p: any) => sum + (p.transferReceived || 0), 0);
 
+  periodGrossTransferTotal += posTransferReceived;
   periodCashTotal -= posCashGiven;
   periodTransferTotal += posTransferReceived;
 

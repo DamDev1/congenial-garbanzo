@@ -19,7 +19,7 @@ async function run() {
 
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
-  
+
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
 
@@ -72,10 +72,10 @@ async function run() {
   console.log(`Cash from Debt Payments: ${debtCash}`);
   console.log(`Cash Expenses: ${cashExpenses}`);
   console.log(`POS Cash Given: ${posCash}`);
-  
+
   const netCash = grossCash + debtCash - cashExpenses - posCash;
-  console.log(`\nCalculated Net Cash: ${netCash}`);
-  
+  console.log(`\nCalculated Cash At Hand Currently: ${netCash}`);
+
   process.exit(0);
 }
 

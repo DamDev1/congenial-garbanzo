@@ -43,28 +43,28 @@ export default async function CashierDashboardPage(
         {/* Cash */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-green-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Net Cash</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Cash At Hand Currently</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.cashTotal.toLocaleString()}</h3>
         </div>
 
         {/* Transfer */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-indigo-100 rounded-full blur-2xl opacity-50 pointer-events-none" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Net Transfer</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Current Transfer Balance</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{stats.transferTotal.toLocaleString()}</h3>
         </div>
 
         {/* Gross Cash */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-green-100/50 rounded-full blur-2xl opacity-50 pointer-events-none" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Total Cash (Gross)</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Total Cash Recieved</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{(stats.grossCashTotal || 0).toLocaleString()}</h3>
         </div>
 
         {/* Gross Transfer */}
         <div className="glass rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col relative overflow-hidden xl:col-span-1">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-indigo-100/50 rounded-full blur-2xl opacity-50 pointer-events-none" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Total Transfer (Gross)</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider relative z-10">Transfers Received Today</p>
           <h3 className="text-3xl font-extrabold text-slate-900 mt-1 relative z-10">₦{(stats.grossTransferTotal || 0).toLocaleString()}</h3>
         </div>
 

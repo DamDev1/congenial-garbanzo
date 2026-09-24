@@ -48,29 +48,27 @@ export default async function OwnerDashboardPage(
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Net Cash</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Cash At Hand Currently</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayCashTotal.toLocaleString()}</div>
           </div>
         </div>
 
-        {/* Transfer */}
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Net Transfer</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Current Transfer Balance</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{stats.todayTransferTotal.toLocaleString()}</div>
           </div>
         </div>
 
-        {/* Gross Cash */}
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/5 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Total Cash (Gross)</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Total Cash Recieved</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{(stats.todayGrossCashTotal || 0).toLocaleString()}</div>
@@ -81,7 +79,7 @@ export default async function OwnerDashboardPage(
         <div className="glass p-6 rounded-2xl flex flex-col gap-4 card-hover relative overflow-hidden group xl:col-span-1">
           <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-bl-full transition-transform duration-500 group-hover:scale-110" />
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-slate-600 text-sm">Total Transfer (Gross)</h3>
+            <h3 className="font-semibold text-slate-600 text-sm">Transfers Received Today</h3>
           </div>
           <div className="flex items-end justify-between mt-2">
             <div className="text-2xl font-extrabold text-slate-800">₦{(stats.todayGrossTransferTotal || 0).toLocaleString()}</div>
@@ -132,74 +130,74 @@ export default async function OwnerDashboardPage(
           </div>
         </div>
       </div>
-      
+
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
         <div className="lg:col-span-4 glass rounded-3xl p-8 flex flex-col">
-           <div className="flex items-center justify-between mb-6">
-             <h3 className="text-xl font-bold text-slate-800">Recent Activity</h3>
-             <Link href="/owner/sales" className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
-           </div>
-           {recentTransactions.length === 0 ? (
-             <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
-               <div className="text-center">
-                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-3">
-                   <Store className="w-8 h-8 text-slate-300" />
-                 </div>
-                 <p className="text-slate-500 font-medium">No recent sales to display</p>
-                 <p className="text-sm text-slate-400 mt-1">Sales will appear here once branches start operating.</p>
-               </div>
-             </div>
-           ) : (
-             <div className="flex-1 overflow-y-auto pr-2 space-y-4">
-               {recentTransactions.slice(0, 3).map((tx: any) => (
-                 <div key={tx._id} className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                   <div>
-                     <div className="font-semibold text-slate-800">₦{tx.totalAmount.toLocaleString()}</div>
-                     <div className="text-sm text-slate-500">{tx.branchId?.name || 'Unknown Branch'} • {tx.cashierId?.name || 'Unknown Cashier'}</div>
-                   </div>
-                   <div className="text-right">
-                     <div className="text-xs font-bold text-slate-400 uppercase">{tx.paymentMethod}</div>
-                     <div className="text-xs text-slate-400">{new Date(tx.createdAt).toLocaleTimeString()}</div>
-                   </div>
-                 </div>
-               ))}
-             </div>
-           )}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-slate-800">Recent Activity</h3>
+            <Link href="/owner/sales" className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
+          </div>
+          {recentTransactions.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-3">
+                  <Store className="w-8 h-8 text-slate-300" />
+                </div>
+                <p className="text-slate-500 font-medium">No recent sales to display</p>
+                <p className="text-sm text-slate-400 mt-1">Sales will appear here once branches start operating.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+              {recentTransactions.slice(0, 3).map((tx: any) => (
+                <div key={tx._id} className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                  <div>
+                    <div className="font-semibold text-slate-800">₦{tx.totalAmount.toLocaleString()}</div>
+                    <div className="text-sm text-slate-500">{tx.branchId?.name || 'Unknown Branch'} • {tx.cashierId?.name || 'Unknown Cashier'}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs font-bold text-slate-400 uppercase">{tx.paymentMethod}</div>
+                    <div className="text-xs text-slate-400">{new Date(tx.createdAt).toLocaleTimeString()}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="lg:col-span-3 glass rounded-3xl p-8">
-           <h3 className="text-xl font-bold text-slate-800 mb-6">Quick Actions</h3>
-           <div className="flex flex-col gap-4">
-              <Link href="/owner/branches" className="group flex items-center justify-between p-5 rounded-2xl bg-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-300 border border-slate-100 shadow-sm hover:shadow-md hover:shadow-blue-500/20">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 group-hover:bg-white/20 flex items-center justify-center transition-colors">
-                    <Store className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <span className="font-semibold text-slate-700 group-hover:text-white transition-colors">Add New Branch</span>
+          <h3 className="text-xl font-bold text-slate-800 mb-6">Quick Actions</h3>
+          <div className="flex flex-col gap-4">
+            <Link href="/owner/branches" className="group flex items-center justify-between p-5 rounded-2xl bg-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-300 border border-slate-100 shadow-sm hover:shadow-md hover:shadow-blue-500/20">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-blue-50 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+                  <Store className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
                 </div>
-                <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all" />
-              </Link>
-              
-              <Link href="/owner/users" className="group flex items-center justify-between p-5 rounded-2xl bg-white hover:bg-gradient-to-r hover:from-emerald-400 hover:to-emerald-500 transition-all duration-300 border border-slate-100 shadow-sm hover:shadow-md hover:shadow-emerald-500/20">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-50 group-hover:bg-white/20 flex items-center justify-center transition-colors">
-                    <Users className="w-5 h-5 text-emerald-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <span className="font-semibold text-slate-700 group-hover:text-white transition-colors">Register Staff</span>
+                <span className="font-semibold text-slate-700 group-hover:text-white transition-colors">Add New Branch</span>
+              </div>
+              <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all" />
+            </Link>
+
+            <Link href="/owner/users" className="group flex items-center justify-between p-5 rounded-2xl bg-white hover:bg-gradient-to-r hover:from-emerald-400 hover:to-emerald-500 transition-all duration-300 border border-slate-100 shadow-sm hover:shadow-md hover:shadow-emerald-500/20">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+                  <Users className="w-5 h-5 text-emerald-600 group-hover:text-white transition-colors" />
                 </div>
-                <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all" />
-              </Link>
-              
-              <Link href="/owner/products" className="group flex items-center justify-between p-5 rounded-2xl bg-white hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-600 transition-all duration-300 border border-slate-100 shadow-sm hover:shadow-md hover:shadow-purple-500/20">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-purple-50 group-hover:bg-white/20 flex items-center justify-center transition-colors">
-                    <Package className="w-5 h-5 text-purple-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <span className="font-semibold text-slate-700 group-hover:text-white transition-colors">Manage Pricing</span>
+                <span className="font-semibold text-slate-700 group-hover:text-white transition-colors">Register Staff</span>
+              </div>
+              <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all" />
+            </Link>
+
+            <Link href="/owner/products" className="group flex items-center justify-between p-5 rounded-2xl bg-white hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-600 transition-all duration-300 border border-slate-100 shadow-sm hover:shadow-md hover:shadow-purple-500/20">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-purple-50 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+                  <Package className="w-5 h-5 text-purple-600 group-hover:text-white transition-colors" />
                 </div>
-                <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all" />
-              </Link>
-           </div>
+                <span className="font-semibold text-slate-700 group-hover:text-white transition-colors">Manage Pricing</span>
+              </div>
+              <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

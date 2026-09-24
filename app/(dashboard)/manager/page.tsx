@@ -22,7 +22,7 @@ export default async function ManagerDashboardPage(
 
   await connectDB();
   const currentUser = await User.findById(session.user.id).lean();
-  
+
   if (!currentUser || !currentUser.branchId) {
     return (
       <div className="p-12 text-center text-slate-500">
@@ -91,7 +91,7 @@ export default async function ManagerDashboardPage(
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Net Cash</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Cash At Hand Currently</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodCashTotal?.toLocaleString() || '0'}</h3>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default async function ManagerDashboardPage(
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Net Transfer </p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Current Transfer Balance </p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodTransferTotal?.toLocaleString() || '0'}</h3>
             </div>
           </div>
@@ -113,7 +113,7 @@ export default async function ManagerDashboardPage(
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-500/5 rounded-full blur-2xl group-hover:bg-green-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Cash (Gross)</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Cash Recieved</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodGrossCashTotal?.toLocaleString() || '0'}</h3>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default async function ManagerDashboardPage(
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors" />
           <div className="flex items-center gap-4 mb-4 relative z-10">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Total Transfer (Gross)</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider truncate">Transfers Received Today</p>
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 truncate">₦{salesStats.periodGrossTransferTotal?.toLocaleString() || '0'}</h3>
             </div>
           </div>
@@ -220,7 +220,7 @@ export default async function ManagerDashboardPage(
           <p className="text-sm font-medium text-slate-500 relative z-10 truncate">{branch?.location || 'No location set'}</p>
         </div>
       </div>
-      
+
       {/* Quick Actions */}
       <div className="mt-12">
         <h2 className="text-xl font-bold text-slate-800 mb-6">Quick Actions</h2>
