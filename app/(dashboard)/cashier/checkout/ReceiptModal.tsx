@@ -70,13 +70,19 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
           </div>
         </div>
 
-        <table className="w-full border-collapse border border-black mb-3 text-black">
+        <table className="w-full border-collapse border border-black mb-3 text-black" style={{ tableLayout: 'fixed' }}>
+          <colgroup>
+            <col style={{ width: '12%' }} />
+            <col style={{ width: '33%' }} />
+            <col style={{ width: '27%' }} />
+            <col style={{ width: '28%' }} />
+          </colgroup>
           <thead>
             <tr className="border-b border-black text-[12px] font-bold uppercase tracking-wider">
-              <th className="py-1 px-1.5 border-r border-black text-center w-[36px]">QTY</th>
-              <th className="py-1 px-1.5 border-r border-black text-left">ITEM</th>
-              <th className="py-1 px-1.5 border-r border-black text-right w-[65px]">PRICE</th>
-              <th className="py-1 px-1.5 text-right w-[75px]">AMOUNT</th>
+              <th className="py-1 px-1 border-r border-black text-center">QTY</th>
+              <th className="py-1 px-1 border-r border-black text-left">ITEM</th>
+              <th className="py-1 px-1 border-r border-black text-right">PRICE</th>
+              <th className="py-1 px-1 text-right">AMOUNT</th>
             </tr>
           </thead>
           <tbody>
@@ -85,10 +91,10 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
               const amount = item.quantity * item.price;
               return (
                 <tr key={idx} className="border-b border-black last:border-b-0">
-                  <td className="py-1 px-1.5 border-r border-black text-center font-bold text-[11px]">{item.quantity}</td>
-                  <td className="py-1 px-1.5 border-r border-black text-left font-bold text-[11px] whitespace-normal leading-tight">{name}</td>
-                  <td className="py-1 px-1.5 border-r border-black text-right font-bold text-[11px] tabular-nums">{item.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
-                  <td className="py-1 px-1.5 text-right font-bold text-[11px] tabular-nums">{amount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
+                  <td className="py-1 px-1 border-r border-black text-center font-bold text-[11px]">{item.quantity}</td>
+                  <td className="py-1 px-1 border-r border-black text-left font-bold text-[11px] whitespace-normal leading-tight overflow-hidden text-ellipsis">{name}</td>
+                  <td className="py-1 px-1 border-r border-black text-right font-bold text-[11px] tabular-nums">{item.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
+                  <td className="py-1 px-1 text-right font-bold text-[11px] tabular-nums">{amount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
                 </tr>
               );
             })}
@@ -171,12 +177,14 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
 
       <style jsx global>{`
         @page {
+          size: 70mm auto;
           margin: 0;
         }
         @media print {
           html, body {
             margin: 0 !important;
             padding: 0 !important;
+            width: 70mm !important;
           }
           body * {
             visibility: hidden;
@@ -189,16 +197,26 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
             left: 0;
             top: 0;
             width: 70mm;
-            max-width: 100%;
             margin: 0;
             padding: 2mm;
             background: white;
             border: none;
             box-shadow: none;
             font-size: 11px;
+            overflow: hidden;
+            box-sizing: border-box;
           }
           #printable-receipt table {
-            width: 100%;
+            width: 100% !important;
+            table-layout: fixed !important;
+            word-wrap: break-word;
+            overflow: hidden;
+          }
+          #printable-receipt table td,
+          #printable-receipt table th {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 1px 2px !important;
           }
         }
       `}</style>
