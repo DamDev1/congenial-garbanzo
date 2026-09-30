@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Package, Search, ArrowLeft, PackagePlus } from 'lucide-react';
+import { Package, Search, ArrowLeft, PackagePlus, MoreVertical, History } from 'lucide-react';
 import { AdjustStockModal } from '@/components/inventory/AdjustStockModal';
+import { StockHistoryModal } from '@/components/inventory/StockHistoryModal';
+import { Dropdown } from '@/components/ui/Dropdown';
 
 export default function BranchInventoryClient({ branch, inventory }: { branch: any, inventory: any[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [historyItem, setHistoryItem] = useState<any>(null);
 
   const filteredInventory = inventory.filter((item: any) => 
     item.productId?.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -21,7 +24,7 @@ export default function BranchInventoryClient({ branch, inventory }: { branch: a
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">Inventory: {branch.name}</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">Inventory: {branch.name.slice(0, 12)}...</h2>
           <p className="text-slate-500 font-medium mt-1">Manage stock quantities for this specific branch.</p>
         </div>
       </div>
@@ -83,13 +86,38 @@ export default function BranchInventoryClient({ branch, inventory }: { branch: a
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => setSelectedItem(item)}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-100"
+                      <Dropdown
+                        trigger={
+                          <button className="text-slate-400 hover:text-slate-700 transition-colors p-2 rounded-full hover:bg-slate-100">
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                        }
                       >
-                        <PackagePlus className="w-4 h-4" />
-                        Adjust Stock
-                      </button>
+                        {(close) => (
+                          <>
+                            <button
+                              onClick={() => {
+                                setSelectedItem(item);
+                                close();
+                              }}
+                              className="w-full flex items-center gap-2 px-4 py-2 text-sm font-bold text-emerald-600 hover:bg-emerald-50 transition-colors"
+                            >
+                              <PackagePlus className="w-4 h-4" />
+                              Adjust Stock
+                            </button>
+                            <button
+                              onClick={() => {
+                                setHistoryItem(item);
+                                close();
+                              }}
+                              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                            >
+                              <History className="w-4 h-4 text-blue-500" />
+                              Stock History
+                            </button>
+                          </>
+                        )}
+                      </Dropdown>
                     </td>
                   </tr>
                 ))
@@ -102,6 +130,11 @@ export default function BranchInventoryClient({ branch, inventory }: { branch: a
         isOpen={!!selectedItem}
         onClose={() => setSelectedItem(null)}
         inventoryItem={selectedItem}
+      />
+      <StockHistoryModal
+        isOpen={!!historyItem}
+        onClose={() => setHistoryItem(null)}
+        inventoryItem={historyItem}
       />
     </div>
   );

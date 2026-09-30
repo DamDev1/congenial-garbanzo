@@ -25,7 +25,6 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
   const cashierName = transaction.cashierId?.name || 'Staff';
   const branchName = transaction.branchId?.name || '—';
 
-  // Build charged label
   const chargedParts: string[] = [];
   if (transaction.cashAmount > 0) chargedParts.push('Cash');
   if (transaction.transferAmount > 0) chargedParts.push('Transfer');
@@ -41,16 +40,13 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
         <h2 className="text-lg font-bold text-slate-800">Payment Successful</h2>
       </div>
 
-      {/* Printable Receipt Area */}
       <div className="bg-white p-5 rounded-xl border border-slate-200 mb-5 font-mono text-[13px] leading-relaxed text-slate-800 shadow-inner" id="printable-receipt">
         
-        {/* Header */}
         <div className="text-center mb-4 pb-3 border-b border-dashed border-slate-300">
           <h3 className="font-black text-base tracking-wide text-slate-900 uppercase">De-Luv Investment Limited</h3>
           <p className="text-sm font-bold text-slate-700 mt-1">Tel: 08035370718</p>
         </div>
 
-        {/* Sale Info */}
         <div className="mb-3 pb-3 border-b border-dashed border-slate-300 space-y-0.5">
           <div className="flex justify-between">
             <span className="text-slate-500">Sale ID</span>

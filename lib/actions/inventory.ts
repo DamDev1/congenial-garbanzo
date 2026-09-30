@@ -5,6 +5,7 @@ import connectDB from '../db/mongoose';
 import Inventory from '../models/Inventory';
 import Product from '../models/Product';
 import Brand from '../models/Brand';
+import StockHistory from '../models/StockHistory';
 
 export async function getManagerInventory(branchId: string) {
   await connectDB();
@@ -59,8 +60,19 @@ export async function addInventoryStock(inventoryId: string, quantityToAdd: numb
     throw new Error('Inventory record not found');
   }
 
+  const previousQuantity = inventory.quantity;
   inventory.quantity += quantityToAdd;
   await inventory.save();
+
+  // Log stock history
+  await StockHistory.create({
+    inventoryId: inventory._id,
+    productId: inventory.productId,
+    branchId: inventory.branchId,
+    previousQuantity,
+    quantityAdded: quantityToAdd,
+    newQuantity: inventory.quantity,
+  });
 
   revalidatePath('/manager/inventory');
   revalidatePath('/cashier/checkout');
@@ -86,8 +98,19 @@ export async function reduceInventoryStock(inventoryId: string, quantityToReduce
     throw new Error('Not enough stock to reduce');
   }
 
+  const previousQuantity = inventory.quantity;
   inventory.quantity -= quantityToReduce;
   await inventory.save();
+
+  // Log stock history (negative quantityAdded for reductions)
+  await StockHistory.create({
+    inventoryId: inventory._id,
+    productId: inventory.productId,
+    branchId: inventory.branchId,
+    previousQuantity,
+    quantityAdded: -quantityToReduce,
+    newQuantity: inventory.quantity,
+  });
 
   revalidatePath('/manager/inventory');
   revalidatePath('/cashier/checkout');
@@ -109,8 +132,19 @@ export async function addStockToBranch(productId: string, branchId: string, quan
     throw new Error('Inventory record not found for this branch');
   }
 
+  const previousQuantity = inventory.quantity;
   inventory.quantity += quantityToAdd;
   await inventory.save();
+
+  // Log stock history
+  await StockHistory.create({
+    inventoryId: inventory._id,
+    productId: inventory.productId,
+    branchId: inventory.branchId,
+    previousQuantity,
+    quantityAdded: quantityToAdd,
+    newQuantity: inventory.quantity,
+  });
 
   revalidatePath('/owner/products');
   revalidatePath('/manager/inventory');
@@ -118,4 +152,15 @@ export async function addStockToBranch(productId: string, branchId: string, quan
   revalidatePath(`/owner/branches/${branchId}`);
 
   return JSON.parse(JSON.stringify(inventory));
+}
+
+export async function getStockHistory(productId: string, branchId: string) {
+  await connectDB();
+
+  const history = await StockHistory.find({ productId, branchId })
+    .sort({ createdAt: -1 })
+    .limit(50)
+    .lean();
+
+  return JSON.parse(JSON.stringify(history));
 }
