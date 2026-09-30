@@ -172,47 +172,76 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
       </div>
 
       <style jsx global>{`
-        @page {
-          size: 70mm auto;
-          margin: 0;
-        }
         @media print {
+          @page {
+            size: 80mm auto;
+            margin: 0;
+          }
+          
+          /* CRITICAL: Hide the main background app entirely so it doesn't create blank pages */
+          body > *:not(:has(#printable-receipt)) {
+            display: none !important;
+          }
+
+          /* Reset body and html */
           html, body {
             margin: 0 !important;
             padding: 0 !important;
-            width: 70mm !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+            background-color: white !important;
           }
+
+          /* Hide everything by default */
           body * {
             visibility: hidden;
           }
+
+          /* Reset modal fixed positioning and max-height which causes clipping */
+          .fixed, [role="dialog"], .overflow-y-auto {
+            position: static !important;
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+            transform: none !important;
+          }
+
+          /* Show the receipt and its children */
           #printable-receipt, #printable-receipt * {
             visibility: visible;
           }
+
+          /* Position the receipt at the top left of the physical page */
           #printable-receipt {
             position: absolute;
             left: 0;
             top: 0;
-            width: 70mm;
+            width: 80mm;
             margin: 0;
-            padding: 2mm;
+            padding: 2mm 4mm;
             background: white;
             border: none;
             box-shadow: none;
             font-size: 11px;
-            overflow: hidden;
+            overflow: visible !important;
             box-sizing: border-box;
+            height: auto !important;
           }
+
           #printable-receipt table {
             width: 100% !important;
             table-layout: fixed !important;
             word-wrap: break-word;
-            overflow: hidden;
           }
-          #printable-receipt table td,
-          #printable-receipt table th {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding: 1px 2px !important;
+
+          #printable-receipt tr {
+            page-break-inside: avoid;
+          }
+
+          #printable-receipt td,
+          #printable-receipt th {
+            padding: 2px !important;
           }
         }
       `}</style>
