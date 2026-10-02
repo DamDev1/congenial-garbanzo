@@ -19,6 +19,7 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
   };
 
   const items = transaction.items || [];
+  const totalQuantity = items.reduce((sum: number, item: any) => sum + (Number(item.quantity) || 0), 0);
   const date = new Date(transaction.createdAt);
   const formattedDate = `${date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
   const saleId = transaction._id?.slice(-10).toUpperCase();
@@ -97,14 +98,17 @@ export function ReceiptModal({ isOpen, onClose, transaction }: ReceiptModalProps
           </tbody>
         </table>
 
-        <div className="border-y border-slate-400 py-2 mb-2">
+        <div className="border-y border-slate-400 py-2 mb-2 space-y-1">
+          <div className="flex justify-between items-center text-slate-600">
+            <span className="font-bold text-xs uppercase">Total Qty</span>
+            <span className="font-bold text-sm">{totalQuantity}</span>
+          </div>
           <div className="flex justify-between items-center">
-            <span className="font-bold text-sm">Total</span>
+            <span className="font-bold text-sm">Total Amount</span>
             <span className="font-black text-base">₦{transaction.totalAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
           </div>
         </div>
 
-        {/* Payment Breakdown */}
         <div className="mb-2 space-y-0.5">
           {transaction.cashAmount > 0 && (
             <div className="flex justify-between">
